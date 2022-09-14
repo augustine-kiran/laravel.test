@@ -13,6 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::get('/', 'HomeController@index');
+
+Route::resource('home', 'HomeController');
+
+Route::resource('blog', 'BlogController');
+
+Route::get('/logout', function () {
+    session()->flush();
+    return redirect('/');
 });
+
+Route::get('delete/{id}', 'BlogController@destroy');
