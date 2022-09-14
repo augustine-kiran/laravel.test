@@ -7,6 +7,8 @@ use App\Models\Blog;
 use App\Models\TagAssigned;
 use App\Models\Category;
 use App\Models\Image;
+use App\Models\Author;
+use App\Models\Tags;
 
 class BlogController extends Controller
 {
@@ -17,7 +19,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        return view('addBlog', ['category' => Category::all()]);
+        return view('addBlog', ['category' => Category::all(), 'tags' => Tags::all()]);
     }
 
     /**
@@ -44,12 +46,17 @@ class BlogController extends Controller
             'path' => $path,
         ]);
 
-        Blog::create([
+        $blog = Blog::create([
             'title' => $request->title,
             'content' => $request->content,
             'category_id' => $request->category,
-            'author_id' => 1, //Author::where('username', session('username'))->value('id'),
+            'author_id' => Author::where('username', session('username'))->value('id'),
             'image_id' => $image->id,
+        ]);
+
+        TagAssigned::create([
+            'tag_id' => $request->tags,
+            'blog_id' => $blog->id,
         ]);
 
         return redirect('/');

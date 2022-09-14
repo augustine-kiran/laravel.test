@@ -3,30 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Blog;
-use App\Models\Author;
+use App\Models\Tags;
+use App\Models\TagAssigned;
 
-class HomeController extends Controller
+class TagsController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->has('username')) {
-            // session(['username' => $request->username]);
-            Author::firstOrCreate([
-                'username' => session('username'),
-            ]);
-        }
-
-        if (session('username')) {
-            return view('home', ['blogs' => Blog::all()]);
-        } else {
-            return view('login');
-        }
+        return view('tags', ['tags' => Tags::all()]);
     }
 
     /**
@@ -34,9 +23,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        Tags::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect('tags')->with(['tags' => Tags::all()]);
     }
 
     /**
@@ -92,6 +85,9 @@ class HomeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        TagAssigned::where('tag_id', $id)->delete();
+        Tags::where('id', $id)->delete();
+
+        return redirect('tags')->with(['tags' => Tags::all()]);
     }
 }

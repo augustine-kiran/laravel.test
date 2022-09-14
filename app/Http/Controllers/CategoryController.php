@@ -3,30 +3,19 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Category;
 use App\Models\Blog;
-use App\Models\Author;
 
-class HomeController extends Controller
+class CategoryController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->has('username')) {
-            // session(['username' => $request->username]);
-            Author::firstOrCreate([
-                'username' => session('username'),
-            ]);
-        }
-
-        if (session('username')) {
-            return view('home', ['blogs' => Blog::all()]);
-        } else {
-            return view('login');
-        }
+        return view('category', ['category' => Category::all()]);
     }
 
     /**
@@ -34,9 +23,13 @@ class HomeController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        Category::create([
+            'name' => $request->name,
+        ]);
+
+        return redirect('category')->with(['category' => Category::all()]);
     }
 
     /**
@@ -92,6 +85,11 @@ class HomeController extends Controller
      */
     public function destroy($id)
     {
-        //
+        Blog::where('category_id', $id)->update([
+            'category_id' => null,
+        ]);
+        Category::where('id', $id)->delete();
+
+        return redirect('category')->with(['category' => Category::all()]);
     }
 }

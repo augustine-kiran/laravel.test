@@ -20,24 +20,24 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         Category::create([
-            'name' => "example",
+            'name' => "Example Category",
         ]);
 
         Author::create([
-            'username' => 'example',
+            'username' => 'Example Author',
         ]);
 
         Tags::create([
-            'name' => 'example',
+            'name' => 'Example Tag',
         ]);
 
         Image::create([
-            'path' => 'images/KFEoiUGVKiBmdortUWutvRs95RMkMAnDUxabFWjT.jpg',
+            'path' => 'images/1ZpNTxKNXWJBijFmsLGYpgzvODbCikCHNiYvIznM.jpg',
         ]);
 
         Blog::create([
-            'title' => 'Example title',
-            'content' => 'Example content',
+            'title' => 'Example Title',
+            'content' => 'Example Content',
             'image_id' => 1,
             'category_id' => 1,
             'author_id' => 1,

@@ -9,22 +9,27 @@ class Blog extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['author_id', 'category_id', 'image_id', 'tag_id'];
+    protected $hidden = ['author_id', 'category_id', 'image_id'];
     protected $appends = ['author', 'category', 'image'];
     protected $fillable = ['title', 'content', 'author_id', 'category_id', 'image_id'];
 
     public function getAuthorAttribute()
     {
-        return Author::find($this->author_id)->value('username');
+        return Author::where('id', $this->author_id)->value('username');
     }
 
     public function getCategoryAttribute()
     {
-        return Category::find($this->category_id)->value('name');
+        return Category::where('id', $this->category_id)->value('name');
     }
 
     public function getImageAttribute()
     {
-        return Image::find($this->image_id)->value('path');
+        return Image::where('id', $this->image_id)->value('path');
+    }
+
+    public function getTagsAttribute()
+    {
+        return TagAssigned::where('blog_id', $this->id)->first();
     }
 }
