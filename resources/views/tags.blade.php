@@ -19,16 +19,17 @@
                 <td>{{ $value->id }}</td>
                 <td>{{ $value->name }}</td>
                 <td>
-                    <!-- <a href="tags/create">Create New</a> -->
+                    <a href="tags/{{{ $value->id }}}">Edit</a>
                     <a href="tags/delete/{{ $value->id }}">Delete</a>
                 </td>
             </tr>
             @endforeach
         </table>
     </div>
+    <br>
     <form action="tags/create" method="get">
         <label for="name">Enter Tag name: </label>
-        <input type="text" name="name" id="name">
+        <input type="text" name="name" id="name" required>
         <input type="submit" value="Add Tag">
     </form>
 </div>

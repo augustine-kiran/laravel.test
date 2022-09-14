@@ -9,12 +9,10 @@
     <div>
         <h1>{{ $blog->title }}</h1>
         <p>{{ $blog->content }}</p>
-        <p>Author: {{ $blog->author }}</p>
-        <p>Category: {{ $blog->category }}</p>
+        <p>Author: {{ $blog->author ?? "" }}</p>
+        <p>Category: {{ $blog->category ?? "" }}</p>
         <img src="{{ asset($blog->image) }}" alt="Image">
-        <p>Tags: {{ $blog->tags->tag_name }}</p>
+        <p>Tags: {{ $blog->tags->tag_name ?? "" }}</p>
     </div>
-    <a href="/home"><button>Go back</button></a>
-    <a href="/logout"><button>Logout</button></a>
 </div>
 @endsection

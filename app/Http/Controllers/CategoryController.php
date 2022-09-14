@@ -25,7 +25,7 @@ class CategoryController extends Controller
      */
     public function create(Request $request)
     {
-        Category::create([
+        Category::firstOrCreate([
             'name' => $request->name,
         ]);
 
@@ -40,7 +40,10 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Category::where('id', $request->id)->update([
+            'name' => $request->name,
+        ]);
+        return redirect('category')->with(['category' => Category::all()]);
     }
 
     /**
@@ -51,7 +54,8 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        //
+        $category_name = Category::where('id', $id)->value('name');
+        return view('updateCategory', ['id' => $id, 'name' => $category_name]);
     }
 
     /**
@@ -74,7 +78,7 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        // 
     }
 
     /**

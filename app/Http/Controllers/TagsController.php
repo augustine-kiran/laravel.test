@@ -40,7 +40,10 @@ class TagsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Tags::where('id', $request->id)->update([
+            'name' => $request->name,
+        ]);
+        return redirect('tags')->with(['tags' => Tags::all()]);
     }
 
     /**
@@ -51,7 +54,8 @@ class TagsController extends Controller
      */
     public function show($id)
     {
-        //
+        $tag_name = Tags::where('id', $id)->value('name');
+        return view('updateTag', ['id' => $id, 'name' => $tag_name]);
     }
 
     /**

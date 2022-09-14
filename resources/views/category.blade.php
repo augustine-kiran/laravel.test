@@ -19,16 +19,17 @@
                 <td>{{ $value->id }}</td>
                 <td>{{ $value->name }}</td>
                 <td>
-                    <!-- <a href="category/create">Create New</a> -->
+                    <a href="category/{{{ $value->id }}}">Edit</a>
                     <a href="category/delete/{{ $value->id }}">Delete</a>
                 </td>
             </tr>
             @endforeach
         </table>
     </div>
+    <br>
     <form action="category/create" method="get">
         <label for="name">Enter category name: </label>
-        <input type="text" name="name" id="name">
+        <input type="text" name="name" id="name" required>
         <input type="submit" value="Add category">
     </form>
 </div>
