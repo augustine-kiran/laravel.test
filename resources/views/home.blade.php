@@ -30,9 +30,9 @@
         <td>{{ $value->author }}</td>
         <td>{{ $value->comments_count }}</td>
         <td>
-            <a href="blog/{{ $value->id }}">View Details</a>
-            <a href="blog/{{ $value->id }}/edit">Edit</a>
-            <a href="delete/{{ $value->id }}" data-method="delete">Delete</a>
+            <a href="{{ url('blog/' . $value->id) }}">View Details</a>
+            <a href="{{ url('blog/' . $value->id . '/edit') }}">Edit</a>
+            <a href="{{ url('delete/' . $value->id) }}" data-method="delete">Delete</a>
         </td>
     </tr>
     @endforeach
