@@ -8,6 +8,7 @@ use App\Models\Author;
 use App\Models\Category;
 use App\Models\Tags;
 use App\Models\TagAssigned;
+use App\Models\Comments;
 
 class HomeController extends Controller
 {
@@ -63,10 +64,15 @@ class HomeController extends Controller
     {
         $categoryIds = Category::where('name', 'like', '%' . $id . '%')->pluck('id');
         $tagIds = Tags::where('name', 'like', '%' . $id . '%')->pluck('id');
-        $blogIds = TagAssigned::whereIn('tag_id', $tagIds)->pluck('tag_id');
+        $blogIds = TagAssigned::whereIn('tag_id', $tagIds)->pluck('blog_id');
+        $commentsBlogIds = Comments::select('blog_id')
+            ->groupBy('blog_id')
+            ->havingRaw('count(comment) = ?', [$id])
+            ->pluck('blog_id');
         $blog = Blog::where('title', 'like', '%' . $id . '%')
             ->orWhereIn('category_id', $categoryIds)
             ->orWhereIn('id', $blogIds)
+            ->orWhereIn('id', $commentsBlogIds)
             ->get();
         return view('home', ['blogs' => $blog, 'search' => $id]);
     }
