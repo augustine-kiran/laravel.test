@@ -9,6 +9,7 @@ use App\Models\Category;
 use App\Models\Image;
 use App\Models\Author;
 use App\Models\Tags;
+use App\Models\Comments;
 
 class BlogController extends Controller
 {
@@ -27,9 +28,15 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $author_id = Author::where('username', session('username'))->value('id');
+        Comments::create([
+            'blog_id' => $request->blog_id,
+            'author_id' => $author_id,
+            'comment' => $request->comment,
+        ]);
+        return redirect('blog/' . $request->blog_id);
     }
 
     /**

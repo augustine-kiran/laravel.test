@@ -10,7 +10,7 @@ class Blog extends Model
     use HasFactory;
 
     protected $hidden = ['author_id', 'category_id', 'image_id'];
-    protected $appends = ['author', 'category', 'image'];
+    protected $appends = ['author', 'category', 'image', 'comments'];
     protected $fillable = ['title', 'content', 'author_id', 'category_id', 'image_id'];
 
     public function getAuthorAttribute()
@@ -31,5 +31,10 @@ class Blog extends Model
     public function getTagsAttribute()
     {
         return TagAssigned::where('blog_id', $this->id)->first();
+    }
+
+    public function getCommentsAttribute()
+    {
+        return Comments::where('blog_id', $this->id)->orderBy('id', 'desc')->get();
     }
 }

@@ -9,6 +9,7 @@ use App\Models\Tags;
 use App\Models\Image;
 use App\Models\Blog;
 use App\Models\TagAssigned;
+use App\Models\Comments;
 
 class DatabaseSeeder extends Seeder
 {
@@ -46,6 +47,12 @@ class DatabaseSeeder extends Seeder
         TagAssigned::create([
             'tag_id' => 1,
             'blog_id' => 1,
+        ]);
+
+        Comments::create([
+            'blog_id' => 1,
+            'author_id' => 1,
+            'comment' => 'Test Comment',
         ]);
         // \App\Models\User::factory(10)->create();
     }
