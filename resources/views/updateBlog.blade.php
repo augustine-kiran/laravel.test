@@ -32,15 +32,15 @@
         <br>
         <div>
             <label for="tags">Select Tags</label>
-            <select name="tags" id="tags">
-                @foreach($tags as $key => $value)
-                @if($tag_id == $value->id)
-                <option value="{{ $value->id }}" selected>{{ $value->name }}</option>
-                @else
-                <option value="{{ $value->id }}">{{ $value->name }}</option>
-                @endif
-                @endforeach
-            </select>
+            <br>
+            @foreach($tags as $key => $value)
+            @if(in_array($value->id, $tag_ids))
+            <input type="checkbox" id="{{ $value->id }}" name="tags[]" value="{{ $value->id }}" checked>
+            @else
+            <input type="checkbox" id="{{ $value->id }}" name="tags[]" value="{{ $value->id }}">
+            @endif
+            <label for="{{ $value->id }}">{{ $value->name }}</label><br>
+            @endforeach
         </div>
         <br>
         <div>

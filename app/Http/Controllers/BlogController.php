@@ -79,8 +79,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $blog = Blog::where('id', $id)->get();
-        return view('details', ['blog' => $blog]);
+        return view('details', ['blog' => Blog::where('id', $id)->first()]);
     }
 
     /**
@@ -92,13 +91,13 @@ class BlogController extends Controller
     public function edit($id)
     {
         $blog = Blog::where('id', $id)->first();
-        $tags = TagAssigned::where('blog_id', $id)->value('tag_id');
+        $tags = TagAssigned::where('blog_id', $id)->pluck('tag_id')->all();
         return view('updateBlog', [
             'blog' => $blog,
             'category' => Category::all(),
             'tags' => Tags::all(),
             'category_id' => $blog->category_id,
-            'tag_id' => $tags,
+            'tag_ids' => $tags,
         ]);
     }
 
@@ -127,10 +126,13 @@ class BlogController extends Controller
 
         $blog->save();
 
-        TagAssigned::firstOrCreate([
-            'tag_id' => $request->tags,
-            'blog_id' => $blog->id,
-        ]);
+        TagAssigned::where('blog_id', $blog->id)->delete();
+        foreach ($request->tags as $key => $value) {
+            TagAssigned::firstOrCreate([
+                'tag_id' => $value,
+                'blog_id' => $blog->id,
+            ]);
+        }
 
         return redirect('/');
     }

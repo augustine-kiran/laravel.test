@@ -13,10 +13,8 @@
         <img src="{{ asset($blog->image) }}" alt="Image">
         <p>Tags:
             @foreach($blog->tags as $key => $value)
-            {{ $value->tag_name }}
+            {{ $value->tag_name }}, &nbsp;
             @endforeach
-
-            <!-- {{ $blog->tags->tag_name ?? "" }} -->
         </p>
     </div>
     <div>
