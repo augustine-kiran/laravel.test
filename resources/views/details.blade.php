@@ -11,7 +11,13 @@
         <p>Author: {{ $blog->author ?? "" }}</p>
         <p>Category: {{ $blog->category ?? "" }}</p>
         <img src="{{ asset($blog->image) }}" alt="Image">
-        <p>Tags: {{ $blog->tags->tag_name ?? "" }}</p>
+        <p>Tags:
+            @foreach($blog->tags as $key => $value)
+            {{ $value->tag_name }}
+            @endforeach
+
+            <!-- {{ $blog->tags->tag_name ?? "" }} -->
+        </p>
     </div>
     <div>
         <h3>Comments</h3>

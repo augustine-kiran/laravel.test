@@ -27,11 +27,11 @@
         <br>
         <div>
             <label for="tags">Select Tags</label>
-            <select name="tags" id="tags">
-                @foreach($tags as $key => $value)
-                <option value="{{ $value->id }}">{{ $value->name }}</option>
-                @endforeach
-            </select>
+            <br>
+            @foreach($tags as $key => $value)
+            <input type="checkbox" id="{{ $value->id }}" name="tags[]" value="{{ $value->id }}">
+            <label for="{{ $value->id }}">{{ $value->name }}</label><br>
+            @endforeach
         </div>
         <br>
         <div>

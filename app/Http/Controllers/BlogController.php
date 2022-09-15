@@ -61,10 +61,12 @@ class BlogController extends Controller
             'image_id' => $image->id,
         ]);
 
-        TagAssigned::create([
-            'tag_id' => $request->tags,
-            'blog_id' => $blog->id,
-        ]);
+        foreach ($request->tags as $key => $value) {
+            TagAssigned::create([
+                'tag_id' => $value,
+                'blog_id' => $blog->id,
+            ]);
+        }
 
         return redirect('/');
     }
@@ -77,8 +79,8 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        $blog = Blog::find($id);
-        return view('details', ['blog' => Blog::find($id)]);
+        $blog = Blog::where('id', $id)->get();
+        return view('details', ['blog' => $blog]);
     }
 
     /**
