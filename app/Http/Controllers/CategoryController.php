@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
-use App\Models\Blog;
 
 class CategoryController extends Controller
 {
@@ -15,7 +14,7 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        return view('category', ['category' => Category::all()]);
+        return view('category/list_category', ['category' => Category::all()]);
     }
 
     /**
@@ -23,13 +22,9 @@ class CategoryController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create(Request $request)
+    public function create()
     {
-        Category::firstOrCreate([
-            'name' => $request->name,
-        ]);
-
-        return redirect('category')->with(['category' => Category::all()]);
+        return view('category/create_category');
     }
 
     /**
@@ -40,10 +35,25 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        Category::where('id', $request->id)->update([
-            'name' => $request->name,
+        $this->validate($request, [
+            'category_name' => 'bail|required|unique:categories,name|max:25',
         ]);
-        return redirect('category')->with(['category' => Category::all()]);
+
+        try {
+            Category::create([
+                'name' => $request->category_name,
+            ]);
+
+            return [
+                'status' => true,
+                'message' => "Category saved successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -54,8 +64,7 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        $category_name = Category::where('id', $id)->value('name');
-        return view('updateCategory', ['id' => $id, 'name' => $category_name]);
+        return view('category/category_details', ['category' => Category::find($id)]);
     }
 
     /**
@@ -66,7 +75,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('category/edit_category', ['category' => Category::find($id)]);
     }
 
     /**
@@ -78,7 +87,25 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // 
+        $this->validate($request, [
+            'category_name' => 'bail|required|unique:categories,name|max:25',
+        ]);
+
+        try {
+            Category::find($id)->update([
+                'name' => $request->category_name,
+            ]);
+
+            return [
+                'status' => true,
+                'message' => "Category updated successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -89,11 +116,18 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        Blog::where('category_id', $id)->update([
-            'category_id' => null,
-        ]);
-        Category::where('id', $id)->delete();
+        try {
+            Category::find($id)->delete();
 
-        return redirect('category')->with(['category' => Category::all()]);
+            return [
+                'status' => true,
+                'message' => "Category updated successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 }

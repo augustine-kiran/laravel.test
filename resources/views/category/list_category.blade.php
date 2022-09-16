@@ -32,5 +32,6 @@
         <input type="text" name="name" id="name" required>
         <input type="submit" value="Add category">
     </form>
+    {{ url('/category/create') }}
 </div>
 @endsection

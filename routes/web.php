@@ -28,9 +28,13 @@ Route::middleware(['LoginSecurity'])->group(function () {
 
     Route::get('delete/{id}', 'BlogController@destroy');
 
-    Route::resource('category', 'CategoryController');
+    // Route::resource('category', 'CategoryController');
     Route::get('category/delete/{id}', 'CategoryController@destroy');
 
     Route::resource('tags', 'TagsController');
     Route::get('tags/delete/{id}', 'TagsController@destroy');
 });
+
+
+
+Route::resource('category', 'CategoryController');
