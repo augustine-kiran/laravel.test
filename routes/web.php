@@ -19,7 +19,7 @@ Route::middleware(['LoginSecurity'])->group(function () {
 
     Route::resource('home', 'HomeController');
 
-    Route::resource('blog', 'BlogController');
+    // Route::resource('blog', 'BlogController');
 
     Route::get('/logout', function () {
         session()->flush();
@@ -31,10 +31,13 @@ Route::middleware(['LoginSecurity'])->group(function () {
     // Route::resource('category', 'CategoryController');
     Route::get('category/delete/{id}', 'CategoryController@destroy');
 
-    Route::resource('tags', 'TagsController');
+    // Route::resource('tags', 'TagsController');
     Route::get('tags/delete/{id}', 'TagsController@destroy');
 });
 
 
 
+
+Route::resource('tags', 'TagsController');
+Route::resource('blog', 'BlogController');
 Route::resource('category', 'CategoryController');

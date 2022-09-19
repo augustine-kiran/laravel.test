@@ -15,7 +15,7 @@ class CreateTagAssignedsTable extends Migration
     {
         Schema::create('tag_assigneds', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('tag_id')->constrained('tags');
+            $table->foreignId('tag_id')->nullable()->constrained('tags')->nullOnDelete();
             $table->foreignId('blog_id')->constrained('blogs');
             $table->unique(['tag_id', 'blog_id']);
             $table->timestamps();

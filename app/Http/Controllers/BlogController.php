@@ -4,12 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Blog;
-use App\Models\TagAssigned;
-use App\Models\Category;
-use App\Models\Image;
-use App\Models\Author;
 use App\Models\Tags;
-use App\Models\Comments;
+use App\Models\Image;
+use App\Models\Category;
+use App\Models\TagAssigned;
 
 class BlogController extends Controller
 {
@@ -20,7 +18,7 @@ class BlogController extends Controller
      */
     public function index()
     {
-        return view('addBlog', ['category' => Category::all(), 'tags' => Tags::all()]);
+        return view('blog/list_blog', ['blog' => Blog::all()]);
     }
 
     /**
@@ -30,13 +28,7 @@ class BlogController extends Controller
      */
     public function create(Request $request)
     {
-        $author_id = Author::where('username', session('username'))->value('id');
-        Comments::create([
-            'blog_id' => $request->blog_id,
-            'author_id' => $author_id,
-            'comment' => $request->comment,
-        ]);
-        return redirect('blog/' . $request->blog_id);
+        return view('blog/create_blog', ['categories' => Category::all(), 'tags' => Tags::all()]);
     }
 
     /**
@@ -47,28 +39,44 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        $path = $request->file('image')->store('images');
-
-        $image = Image::create([
-            'path' => $path,
+        $this->validate($request, [
+            'title' => 'bail|required|max:25',
+            'content' => 'bail|required',
+            'category' => 'bail|required|exists:categories,id',
+            'tags' => 'bail|required|array|exists:tags,id',
+            'image' => 'bail|required|mimes:png,jpeg|unique:images,path',
         ]);
 
-        $blog = Blog::create([
-            'title' => $request->title,
-            'content' => $request->content,
-            'category_id' => $request->category,
-            'author_id' => Author::where('username', session('username'))->value('id'),
-            'image_id' => $image->id,
-        ]);
-
-        foreach ($request->tags as $key => $value) {
-            TagAssigned::create([
-                'tag_id' => $value,
-                'blog_id' => $blog->id,
+        try {
+            $path = $request->file('image')->store('images');
+            $image = Image::create([
+                'path' => $path,
             ]);
-        }
 
-        return redirect('/');
+            $blog = Blog::create([
+                'title' => $request->title,
+                'content' => $request->content,
+                'category_id' => $request->category,
+                'author_id' => 1, //Author::where('username', session('username'))->value('id'),
+                'image_id' => $image->id,
+            ]);
+
+            foreach ($request->tags as $key => $value) {
+                TagAssigned::create([
+                    'tag_id' => $value,
+                    'blog_id' => $blog->id,
+                ]);
+            }
+            return [
+                'status' => true,
+                'message' => "Blog saved successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -79,7 +87,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
-        return view('details', ['blog' => Blog::where('id', $id)->first()]);
+        return view('blog/blog_details', ['blog' => Blog::find($id)]);
     }
 
     /**

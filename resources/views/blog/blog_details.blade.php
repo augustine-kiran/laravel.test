@@ -1,9 +1,10 @@
-@extends('master')
-@section('title')
-<title>Blog Details</title>
-@endsection
-@section('content')
-<div>
+<html>
+
+<head>
+    <title>Blog Details</title>
+</head>
+
+<body>
     <h1>Blog Details</h1>
     <div style="width: 70%; float: left;">
         <h1>{{ $blog->title }}</h1>
@@ -34,5 +35,6 @@
         </div>
         @endforeach
     </div>
-</div>
-@endsection
+</body>
+
+</html>

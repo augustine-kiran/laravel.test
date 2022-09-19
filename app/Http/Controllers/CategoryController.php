@@ -121,7 +121,7 @@ class CategoryController extends Controller
 
             return [
                 'status' => true,
-                'message' => "Category updated successfully",
+                'message' => "Category deleted successfully",
             ];
         } catch (\Exception $ex) {
             return [

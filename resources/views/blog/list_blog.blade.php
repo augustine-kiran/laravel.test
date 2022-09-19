@@ -14,10 +14,10 @@
                 <th>Name</th>
                 <th>Actions</th>
             </tr>
-            @foreach($category as $key => $value)
+            @foreach($blog as $key => $value)
             <tr>
                 <td>{{ $value->id }}</td>
-                <td>{{ $value->name }}</td>
+                <td>{{ $value->title }}</td>
                 <td>
                     <a href="category/{{{ $value->id }}}">Edit</a>
                     <a href="category/delete/{{ $value->id }}">Delete</a>

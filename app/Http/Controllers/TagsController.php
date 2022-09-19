@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tags;
-use App\Models\TagAssigned;
 
 class TagsController extends Controller
 {
@@ -15,7 +14,7 @@ class TagsController extends Controller
      */
     public function index()
     {
-        return view('tags', ['tags' => Tags::all()]);
+        return view('tag/list_tags', ['tags' => Tags::all()]);
     }
 
     /**
@@ -25,11 +24,7 @@ class TagsController extends Controller
      */
     public function create(Request $request)
     {
-        Tags::create([
-            'name' => $request->name,
-        ]);
-
-        return redirect('tags')->with(['tags' => Tags::all()]);
+        return view('tag/create_tag');
     }
 
     /**
@@ -40,10 +35,25 @@ class TagsController extends Controller
      */
     public function store(Request $request)
     {
-        Tags::where('id', $request->id)->update([
-            'name' => $request->name,
+        $this->validate($request, [
+            'tag_name' => 'bail|required|unique:tags,name|max:25',
         ]);
-        return redirect('tags')->with(['tags' => Tags::all()]);
+
+        try {
+            Tags::create([
+                'name' => $request->tag_name,
+            ]);
+
+            return [
+                'status' => true,
+                'message' => "Tag saved successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -54,8 +64,7 @@ class TagsController extends Controller
      */
     public function show($id)
     {
-        $tag_name = Tags::where('id', $id)->value('name');
-        return view('updateTag', ['id' => $id, 'name' => $tag_name]);
+        return view('tag/tag_details', ['tag' => Tags::find($id)]);
     }
 
     /**
@@ -66,7 +75,7 @@ class TagsController extends Controller
      */
     public function edit($id)
     {
-        //
+        return view('tag/edit_tag', ['tag' => Tags::find($id)]);
     }
 
     /**
@@ -78,7 +87,25 @@ class TagsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $this->validate($request, [
+            'tag_name' => 'bail|required|unique:tags,name|max:25',
+        ]);
+
+        try {
+            Tags::find($id)->update([
+                'name' => $request->tag_name,
+            ]);
+
+            return [
+                'status' => true,
+                'message' => "Tag updated successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 
     /**
@@ -89,9 +116,18 @@ class TagsController extends Controller
      */
     public function destroy($id)
     {
-        TagAssigned::where('tag_id', $id)->delete();
-        Tags::where('id', $id)->delete();
+        try {
+            Tags::find($id)->delete();
 
-        return redirect('tags')->with(['tags' => Tags::all()]);
+            return [
+                'status' => true,
+                'message' => "Tag deleted successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 }

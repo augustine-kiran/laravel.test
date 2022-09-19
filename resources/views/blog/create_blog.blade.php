@@ -1,14 +1,18 @@
-@extends('master')
-@section('title')
-<title>Create new blog</title>
-@endsection
-@section('content')
-<div>
-    <form action="/blog" method="post" enctype="multipart/form-data">
+<html>
+
+<head>
+    <title>Create Blog</title>
+</head>
+
+<body>
+    <div>
+        <h3>Create New blog</h3>
+    </div>
+    <form action="{{ url('blog') }}" method="POST" enctype="multipart/form-data">
         @csrf
         <div>
             <label for="title">Enter Title:</label>
-            <input type="text" id="title" name="title" required>
+            <input type="text" id="title" name="title" maxlength="25" required autofocus>
         </div>
         <br>
         <div>
@@ -19,7 +23,7 @@
         <div>
             <label for="category">Select Category</label>
             <select name="category" id="category">
-                @foreach($category as $key => $value)
+                @foreach($categories as $key => $value)
                 <option value="{{ $value->id }}">{{ $value->name }}</option>
                 @endforeach
             </select>
@@ -41,5 +45,6 @@
         <br>
         <input type="submit" value="Save Blog">
     </form>
-</div>
-@endsection
+</body>
+
+</html>
