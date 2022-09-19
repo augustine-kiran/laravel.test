@@ -153,9 +153,18 @@ class BlogController extends Controller
      */
     public function destroy($id)
     {
-        TagAssigned::where('blog_id', $id)->delete();
-        Comments::where('blog_id', $id)->delete();
-        Blog::find($id)->delete();
-        return redirect('/');
+        try {
+            Blog::find($id)->delete();
+
+            return [
+                'status' => true,
+                'message' => "Blog deleted successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage(),
+            ];
+        }
     }
 }

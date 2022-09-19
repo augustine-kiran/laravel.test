@@ -9,37 +9,51 @@ class Blog extends Model
 {
     use HasFactory;
 
+    const AUTHOR_NAME = 'username';
+
     protected $hidden = ['author_id', 'category_id', 'image_id'];
-    protected $appends = ['author', 'category', 'image', 'comments', 'comments_count', 'tags'];
+    protected $appends = ['comments_count'];
     protected $fillable = ['title', 'content', 'author_id', 'category_id', 'image_id'];
 
-    public function getAuthorAttribute()
+    public function category()
     {
-        return Author::where('id', $this->author_id)->value('username');
+        return $this->hasOne(Category::class, 'id');
     }
 
-    public function getCategoryAttribute()
+    public function tags()
     {
-        return Category::where('id', $this->category_id)->value('name');
+        return $this->hasManyThrough(Tags::class, TagAssigned::class, 'blog_id', 'id', 'id', 'id');
     }
 
-    public function getImageAttribute()
+    public function comments()
     {
-        return Image::where('id', $this->image_id)->value('path');
+        return $this->hasMany(Comments::class);
     }
 
-    public function getTagsAttribute()
+    public function image()
     {
-        return TagAssigned::where('blog_id', $this->id)->get();
+        return $this->hasOne(Image::class, 'id');
     }
 
-    public function getCommentsAttribute()
+    public function author()
     {
-        return Comments::where('blog_id', $this->id)->orderBy('id', 'desc')->get();
+        return $this->hasOne(Author::class, 'id');
     }
 
     public function getCommentsCountAttribute()
     {
-        return Comments::where('blog_id', $this->id)->count();
+        return count($this->comments);
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+        self::deleting(function ($blog) {
+            $blog->comments()->delete();
+            $blog->tags()->delete();
+        });
+        self::deleted(function ($blog) {
+            $blog->image()->delete();
+        });
     }
 }

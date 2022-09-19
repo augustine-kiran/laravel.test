@@ -11,10 +11,9 @@ class Comments extends Model
 
     protected $hidden = ['id', 'blog_id', 'author_id'];
     protected $fillable = ['blog_id', 'comment', 'author_id'];
-    protected $appends = ['author'];
 
-    public function getAuthorAttribute()
+    public function author()
     {
-        return Author::where('id', $this->author_id)->value('username');
+        return $this->hasOne(Author::class, 'id');
     }
 }
