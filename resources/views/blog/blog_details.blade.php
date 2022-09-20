@@ -1,29 +1,25 @@
-<html>
-
-<head>
-    <title>Blog Details</title>
-</head>
-
-<body>
+@extends('master', ['title' => 'Blog Details'])
+@section('content')
+<div>
     <h1>Blog Details</h1>
-    <div style="width: 70%; float: left;">
-        <h1>{{ $blog->title }}</h1>
-        <p>{{ $blog->content }}</p>
-        <p>Author: {{ $blog->author->username ?? "" }}</p>
-        <p>Category: {{ $blog->category->name ?? "" }}</p>
-        <img src="{{ asset($blog->image->path) }}" alt="Image">
-        <p>Tags:
-            @foreach($blog->tags as $key => $value)
-            {{ $value->name }}, &nbsp;
-            @endforeach
-        </p>
-        <form action="{{ url('blog/' . $blog->id) }}" method="POST">
-            @csrf
-            {{ method_field('DELETE') }}
-            <input type="hidden" name="blog_id" id="blog_id" value="{{ $blog->id }}">
-            <input type="submit" value="Delete Blog">
-        </form>
-    </div>
+</div>
+<form action="">
+    <h3>{{ $blog->title }}</h3>
+    <p>{{ $blog->content }}</p>
+    <p>Author: {{ $blog->author->username ?? "" }}</p>
+    <p>Category: {{ $blog->category->name ?? "" }}</p>
+    <img src="{{ asset($blog->image->path) }}" class="img-fluid" alt="{{ $blog->title }} image">
+    <p>Tags:
+        @foreach($blog->tags as $key => $value)
+        {{ $value->name }}, &nbsp;
+        @endforeach
+    </p>
+    <form action="{{ url('blog/' . $blog->id) }}" method="POST">
+        @csrf
+        {{ method_field('DELETE') }}
+        <input type="hidden" name="blog_id" id="blog_id" value="{{ $blog->id }}">
+        <input type="submit" value="Delete Blog">
+    </form>
     <div>
         <h3>Comments</h3>
         <div>
@@ -41,6 +37,5 @@
         </div>
         @endforeach
     </div>
-</body>
-
-</html>
+</form>
+@endsection

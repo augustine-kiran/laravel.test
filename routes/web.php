@@ -15,29 +15,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', 'HomeController@index');
 
-Route::middleware(['LoginSecurity'])->group(function () {
-
-    Route::resource('home', 'HomeController');
-
-    // Route::resource('blog', 'BlogController');
-
-    Route::get('/logout', function () {
-        session()->flush();
-        return redirect('/');
-    });
-
-    Route::get('delete/{id}', 'BlogController@destroy');
-
-    // Route::resource('category', 'CategoryController');
-    Route::get('category/delete/{id}', 'CategoryController@destroy');
-
-    // Route::resource('tags', 'TagsController');
-    Route::get('tags/delete/{id}', 'TagsController@destroy');
+Route::middleware(['auth'])->group(function () {
+    Route::resource('tags', 'TagsController');
+    Route::resource('blog', 'BlogController');
+    Route::resource('user', 'UserController');
+    Route::resource('category', 'CategoryController');
 });
 
-
-
-
-Route::resource('tags', 'TagsController');
-Route::resource('blog', 'BlogController');
-Route::resource('category', 'CategoryController');
+Route::resource('login', 'LoginController');
+Route::get('login', 'LoginController@index')->name('login');
+Route::get('logout', 'LoginController@logout');

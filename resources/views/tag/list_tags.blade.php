@@ -1,36 +1,29 @@
-@extends('master')
-@section('title')
-<title>Tags</title>
-@endsection
+@extends('master', ['title' => 'Tags'])
 @section('content')
 <div>
     <div>
         <h1>Tags</h1>
     </div>
-    <div>
-        <table border="1">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Actions</th>
             </tr>
+        </thead>
+        <tbody>
             @foreach($tags as $key => $value)
             <tr>
-                <td>{{ $value->id }}</td>
-                <td>{{ $value->name }}</td>
+                <th scope="row">{{ $value->id }}</th>
+                <td><a href="{{ url('tags/' . $value->id ) }}">{{ $value->name }}</a></td>
                 <td>
-                    <a href="tags/{{{ $value->id }}}">Edit</a>
-                    <a href="tags/delete/{{ $value->id }}">Delete</a>
+                    <a href="{{ url('tags/' . $value->id) }}" class="btn btn-success">View</a>
+                    <a href="{{ url('tags/' . $value->id . '/edit') }}" class="btn btn-primary">Edit</a>
                 </td>
             </tr>
             @endforeach
-        </table>
-    </div>
-    <br>
-    <form action="tags/create" method="get">
-        <label for="name">Enter Tag name: </label>
-        <input type="text" name="name" id="name" required>
-        <input type="submit" value="Add Tag">
-    </form>
+        </tbody>
+    </table>
 </div>
 @endsection

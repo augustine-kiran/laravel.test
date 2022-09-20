@@ -98,15 +98,7 @@ class BlogController extends Controller
      */
     public function edit($id)
     {
-        $blog = Blog::where('id', $id)->first();
-        $tags = TagAssigned::where('blog_id', $id)->pluck('tag_id')->all();
-        return view('updateBlog', [
-            'blog' => $blog,
-            'category' => Category::all(),
-            'tags' => Tags::all(),
-            'category_id' => $blog->category_id,
-            'tag_ids' => $tags,
-        ]);
+        return view('blog/edit_blog', ['blog' => Blog::find($id), 'categories' => Category::all(), 'tags' => Tags::all()]);
     }
 
     /**
@@ -118,31 +110,49 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $blog = Blog::where('id', $id)->first();
-        $blog->title = $request->title;
-        $blog->content = $request->content;
-        $blog->category_id = $request->category;
-        // $blog->author_id = Author::where('username', session('username'))->value('id');
+        $this->validate($request, [
+            'title' => 'bail|required|max:25',
+            'content' => 'bail|required',
+            'category' => 'bail|required|exists:categories,id',
+            'tags' => 'bail|required|array|exists:tags,id',
+            'image' => 'bail|mimes:png,jpeg|unique:images,path',
+        ]);
 
-        if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images');
-            $image = Image::firstOrCreate([
-                'path' => $path,
-            ]);
-            $blog->image_id = $image->id;
+        try {
+            $data = [
+                'title' => $request->title,
+                'content' => $request->content,
+                'category_id' => $request->category,
+                'author_id' => 1, //Author::where('username', session('username'))->value('id'),
+                // 'image_id' => $image->id,
+            ];
+
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('images');
+                $image = Image::create([
+                    'path' => $path,
+                ]);
+                $data['image_id'] = $image->id;
+            }
+
+            $blog = Blog::find($id)->update($data);
+
+            foreach ($request->tags as $key => $value) {
+                TagAssigned::firstOrCreate([
+                    'tag_id' => $value,
+                    'blog_id' => $id,
+                ]);
+            }
+            return [
+                'status' => true,
+                'message' => "Blog saved successfully",
+            ];
+        } catch (\Exception $ex) {
+            return [
+                'status' => false,
+                'message' => $ex->getMessage() . ' - ' . $ex->getLine(),
+            ];
         }
-
-        $blog->save();
-
-        TagAssigned::where('blog_id', $blog->id)->delete();
-        foreach ($request->tags as $key => $value) {
-            TagAssigned::firstOrCreate([
-                'tag_id' => $value,
-                'blog_id' => $blog->id,
-            ]);
-        }
-
-        return redirect('/');
     }
 
     /**

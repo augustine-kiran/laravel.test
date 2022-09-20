@@ -1,17 +1,79 @@
-@extends('master')
-@section('title')
-<title>Category</title>
-@endsection
+@extends('master', ['title' => 'List Blogs'])
 @section('content')
 <div>
     <div>
-        <h1>Categories</h1>
+        <h1>All blogs</h1>
     </div>
+    <div>
+        <table id="example"></table>
+    </div>
+
+
+
+
+
+
+    <script>
+        $(document).ready(function() {
+            // Setup - add a text input to each footer cell
+            $('#example tfoot th').each(function() {
+                var title = $(this).text();
+                $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+            });
+
+            // DataTable
+            var table = $('#example').DataTable({
+                initComplete: function() {
+                    // Apply the search
+                    this.api()
+                        .columns()
+                        .every(function() {
+                            var that = this;
+
+                            $('input', this.footer()).on('keyup change clear', function() {
+                                if (that.search() !== this.value) {
+                                    that.search(this.value).draw();
+                                }
+                            });
+                        });
+                },
+            });
+        });
+    </script>
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">First</th>
+                <th scope="col">Last</th>
+                <th scope="col">Handle</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <th scope="row">1</th>
+                <td>Mark</td>
+                <td>Otto</td>
+                <td>@mdo</td>
+            </tr>
+            <tr>
+                <th scope="row">2</th>
+                <td>Jacob</td>
+                <td>Thornton</td>
+                <td>@fat</td>
+            </tr>
+            <tr>
+                <th scope="row">3</th>
+                <td colspan="2">Larry the Bird</td>
+                <td>@twitter</td>
+            </tr>
+        </tbody>
+    </table>
     <div>
         <table border="1">
             <tr>
                 <th>ID</th>
-                <th>Name</th>
+                <th>Title</th>
                 <th>Actions</th>
             </tr>
             @foreach($blog as $key => $value)

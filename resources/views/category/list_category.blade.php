@@ -1,36 +1,29 @@
-@extends('master')
-@section('title')
-<title>Category</title>
-@endsection
+@extends('master', ['title' => 'Categories'])
 @section('content')
 <div>
     <div>
         <h1>Categories</h1>
     </div>
-    <div>
-        <table border="1">
+    <table class="table table-hover">
+        <thead>
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Actions</th>
+                <th scope="col">#</th>
+                <th scope="col">Name</th>
+                <th scope="col">Actions</th>
             </tr>
+        </thead>
+        <tbody>
             @foreach($category as $key => $value)
             <tr>
-                <td>{{ $value->id }}</td>
-                <td>{{ $value->name }}</td>
+                <th scope="row">{{ $value->id }}</th>
+                <td><a href="{{ url('category/' . $value->id ) }}">{{ $value->name }}</a></td>
                 <td>
-                    <a href="category/{{{ $value->id }}}">Edit</a>
-                    <a href="category/delete/{{ $value->id }}">Delete</a>
+                    <a href="{{ url('category/' . $value->id) }}" class="btn btn-success">View</a>
+                    <a href="{{ url('category/' . $value->id . '/edit') }}" class="btn btn-primary">Edit</a>
                 </td>
             </tr>
             @endforeach
-        </table>
-    </div>
-    <br>
-    <form action="category/create" method="get">
-        <label for="name">Enter category name: </label>
-        <input type="text" name="name" id="name" required>
-        <input type="submit" value="Add category">
-    </form>
+        </tbody>
+    </table>
 </div>
 @endsection

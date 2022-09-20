@@ -1,23 +1,18 @@
-<html>
-
-<head>
-    <title>Edit Category</title>
-</head>
-
-<body>
-    <div>
-        <h3>Update Category</h3>
+@extends('master', ['title' => 'Edit Category'])
+@section('content')
+<div>
+    <h3>Update Category</h3>
+</div>
+<form action="{{ url('category/' . $category->id) }}" method="POST">
+    @csrf
+    {{ method_field('PUT') }}
+    <div class="form-group">
+        <label for="category_name">Enter Category Name</label>
+        <input type="text" class="form-control" name="category_name" id="category_name" value="{{ $category->name }}" placeholder="Enter Category name" maxlength="25" required autofocus>
     </div>
-    <form action="{{ url('category/' . $category->id) }}" method="POST">
-        @csrf
-        {{ method_field('PUT') }}
-        <label for="category_name">Edit Category Name: </label>
-        <input type="text" name="category_name" id="category_name" value="{{ $category->name }}" maxlength="25" required autofocus>
-        <input type="submit" value="Update Category">
-    </form>
     <div>
         <p style="color: red;">{{ $errors->first('category_name') }}</p>
     </div>
-</body>
-
-</html>
+    <button type="submit" class="btn btn-primary">Update Category</button>
+</form>
+@endsection

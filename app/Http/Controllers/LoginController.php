@@ -3,34 +3,18 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Blog;
-use App\Models\Author;
-use App\Models\Category;
-use App\Models\Tags;
-use App\Models\TagAssigned;
-use App\Models\Comments;
+use Illuminate\Support\Facades\Auth;
 
-class HomeController extends Controller
+class LoginController extends Controller
 {
     /**
      * Display a listing of the resource.
      *
      * @return \Illuminate\Http\Response
      */
-    public function index(Request $request)
+    public function index()
     {
-        if ($request->has('username')) {
-            // session(['username' => $request->username]);
-            Author::firstOrCreate([
-                'username' => session('username'),
-            ]);
-        }
-
-        if (session('username')) {
-            return view('home', ['blogs' => Blog::all()]);
-        } else {
-            return view('login');
-        }
+        return view('login.login');
     }
 
     /**
@@ -51,7 +35,16 @@ class HomeController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $this->validate($request, [
+            'username' => 'required|min:6|max:25',
+            'password' => 'required|min:6|max:25',
+        ]);
+
+        if (Auth::attempt($request->only('username', 'password'))) {
+            return redirect()->intended(url('blog'));
+        }
+
+        return redirect(url('login'))->with(['message' => 'Incorrect credentials']);
     }
 
     /**
@@ -62,19 +55,7 @@ class HomeController extends Controller
      */
     public function show($id)
     {
-        $categoryIds = Category::where('name', 'like', '%' . $id . '%')->pluck('id');
-        $tagIds = Tags::where('name', 'like', '%' . $id . '%')->pluck('id');
-        $blogIds = TagAssigned::whereIn('tag_id', $tagIds)->pluck('blog_id');
-        $commentsBlogIds = Comments::select('blog_id')
-            ->groupBy('blog_id')
-            ->havingRaw('count(comment) = ?', [$id])
-            ->pluck('blog_id');
-        $blog = Blog::where('title', 'like', '%' . $id . '%')
-            ->orWhereIn('category_id', $categoryIds)
-            ->orWhereIn('id', $blogIds)
-            ->orWhereIn('id', $commentsBlogIds)
-            ->get();
-        return view('home', ['blogs' => $blog, 'search' => $id]);
+        //
     }
 
     /**
@@ -109,5 +90,10 @@ class HomeController extends Controller
     public function destroy($id)
     {
         //
+    }
+
+    public function logout()
+    {
+        Auth::logout();
     }
 }

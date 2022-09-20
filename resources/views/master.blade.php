@@ -1,27 +1,23 @@
-<!DOCTYPE html>
 <html>
 
 <head>
-    @yield('title')
+    <title>{{ $title ?? env('APP_NAME') }}</title>
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('css/datatables.min.css') }}">
+    <script src="{{ asset('js/datatables.min.js') }}"></script>
 </head>
 
 <body>
-    <div>
-        @if(session('username'))
-        <p>
-            <a href="/blog">Create Blog</a> |
-            <a href="/home">List all blogs</a> |
-            <a href="/category">List all categories</a> |
-            <a href="/tags">List all Tags</a> |
-            <a href="/logout">Logout</a>
-        </p>
-        <label>Logged username: {{ session('username') }}</label>
-        @endif
-        <br>
-        <br>
-        <div>
-            @yield('content')
-        </div>
+    <p>
+        <a href="/user/create">Create user</a> |
+        <a href="/blog">Create Blog</a> |
+        <a href="/home">List all blogs</a> |
+        <a href="/category">List all categories</a> |
+        <a href="/tags">List all Tags</a> |
+        <a href="{{ url('logout') }}">Logout</a>
+    </p>
+    <div class="container">
+        @yield('content')
     </div>
 </body>
 
