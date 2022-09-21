@@ -13,11 +13,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', 'HomeController@index');
+Route::get('/', function () {
+    return redirect(url('login'));
+});
 
 Route::middleware(['auth'])->group(function () {
     Route::resource('tags', 'TagsController');
     Route::resource('blog', 'BlogController');
+    Route::get('get_blogs', 'BlogController@getBlogList');
     Route::resource('user', 'UserController');
     Route::resource('category', 'CategoryController');
 });

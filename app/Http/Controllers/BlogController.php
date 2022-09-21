@@ -177,4 +177,9 @@ class BlogController extends Controller
             ];
         }
     }
+
+    public function getBlogList()
+    {
+        return Blog::all();
+    }
 }

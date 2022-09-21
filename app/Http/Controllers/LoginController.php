@@ -14,6 +14,10 @@ class LoginController extends Controller
      */
     public function index()
     {
+        if (Auth::check()) {
+            return redirect(url('blog'));
+        }
+
         return view('login.login');
     }
 
@@ -95,5 +99,6 @@ class LoginController extends Controller
     public function logout()
     {
         Auth::logout();
+        return redirect(url('login'));
     }
 }
