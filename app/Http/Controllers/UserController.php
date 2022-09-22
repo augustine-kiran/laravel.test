@@ -44,16 +44,18 @@ class UserController extends Controller
         try {
             $request['password'] = bcrypt($request->password);
             User::create($request->all('name', 'username', 'password'));
-            return [
+            $status = [
                 'status' => true,
                 'message' => 'User created successfull',
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage() . ', Line: ' . $ex->getLine(),
+                'message' => 'User create not successful',
             ];
         }
+
+        return redirect(url('blog'))->with(['status' => $status]);
     }
 
     /**
