@@ -222,7 +222,7 @@ class BlogController extends Controller
         } catch (\Exception $ex) {
             return [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Blog deletion not successful",
             ];
         }
     }

@@ -47,16 +47,18 @@ class CommentsController extends Controller
                 'user_id' => auth()->id(),
             ]);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Comment saved successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
                 'message' => $ex->getMessage(),
             ];
         }
+
+        return redirect(url('blog/' . $request->blog_id));
     }
 
     /**
@@ -101,6 +103,9 @@ class CommentsController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $comment = Comments::find($id);
+        $blog_id = $comment->blog_id;
+        $comment->delete();
+        return redirect(url('blog/' . $blog_id));
     }
 }

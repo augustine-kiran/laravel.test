@@ -15,11 +15,11 @@
 
 <body>
     <div class="row justify-content-center" style="margin-top: 1%;">
+
         <!-- Home -->
         <div class="dropdown" style="margin-left: 20px;">
             <a href="{{ url('/') }}"><button class="dropbtn">Home</button></a>
         </div>
-
 
         &nbsp;
         <!-- Blog -->
@@ -60,18 +60,12 @@
             </div>
         </div>
     </div>
-
-
-
-    <!-- <p>
-        <a href="/user/create">Create user</a> |
-        <a href="/blog">Create Blog</a> |
-        <a href="/home">List all blogs</a> |
-        <a href="/category">List all categories</a> |
-        <a href="/tags">List all Tags</a> |
-        <a href="{{ url('logout') }}">Logout</a>
-    </p> -->
-    <div class="container">
+    <div class="row">
+        <div class="col-md-4 offset-8">
+            <p style="color: grey;">Logged User: {{ auth()->user()->name }}</p>
+        </div>
+    </div>
+    <div class="container" style="border: 1 solid grey ;">
         @yield('content')
     </div>
 </body>

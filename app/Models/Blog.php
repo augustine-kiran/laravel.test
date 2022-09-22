@@ -13,7 +13,7 @@ class Blog extends Model
 
     protected $hidden = ['author_id', 'category_id', 'image_id'];
     protected $appends = ['comments_count'];
-    protected $fillable = ['title', 'content', 'author_id', 'category_id', 'image_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'category_id', 'image_id'];
 
     public function category()
     {
@@ -32,7 +32,7 @@ class Blog extends Model
 
     public function comments()
     {
-        return $this->hasMany(Comments::class, 'blog_id', 'id');
+        return $this->hasMany(Comments::class, 'blog_id', 'id')->orderBy('id', 'DESC');
     }
 
     public function image()
