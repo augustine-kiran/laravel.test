@@ -7,8 +7,6 @@ use App\Models\Blog;
 use App\Models\Tags;
 use App\Models\Image;
 use App\Models\Category;
-use App\Models\TagAssigned;
-use DataTables;
 
 class BlogController extends Controller
 {
@@ -19,42 +17,20 @@ class BlogController extends Controller
      */
     public function index(Request $request)
     {
-        // $data = Blog::all('id');
-        // return DataTables::of($data)
-        //     ->addColumn(
-        //         'id',
-        //         function ($row) {
-        //             return "ok";
-        //         }
-        //     )
-        //     ->removeColumn('comments_count')
-        //     ->removeColumn('comments')
-        //     ->removeColumn('created_at')
-        //     ->removeColumn('updated_at')
-        // ->addColumn('action', function ($row) {
-
-        //     $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
-
-        //     return $btn;
-        // })
-        // ->rawColumns(['action'])
-        // ->make(true);
         if ($request->ajax()) {
-            $data = Blog::all('id');
-            // return $data;
-            return DataTables::of($data)
-                ->addColumn(
-                    'id',
-                    function ($row) {
-                        return "ok";
-                    }
-                )
-                ->removeColumn('id')
-                ->removeColumn('comments_count')
-                ->removeColumn('comments')
-                ->removeColumn('created_at')
-                ->removeColumn('updated_at')
-                ->make(true);
+            $data = Blog::all();
+            $output['data'] = [];
+            foreach ($data as $value) {
+                $output['data'][] = [
+                    $value->id,
+                    $value->title,
+                    $value->category->name,
+                    $value->comments_count,
+                    '<a href="' . url('blog/' . $value->id . '/edit') . '" class="btn btn-primary">Edit</a>
+                    <a href="' . url('blog/' . $value->id) . '" class="btn btn-info">View</a>',
+                ];
+            }
+            return response()->json($output);
         }
 
         return view('blog/list_blog', ['blog' => Blog::all()]);
@@ -110,16 +86,18 @@ class BlogController extends Controller
 
             $blog->tagsAssigned()->createMany($tags);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Blog saved successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Blog saved not successful",
             ];
         }
+
+        return redirect(url('blog'))->with(['status' => $status]);
     }
 
     /**
@@ -192,16 +170,18 @@ class BlogController extends Controller
 
             $blog->tagsAssigned()->createMany($tags);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Blog updated successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage() . ' - ' . $ex->getLine(),
+                'message' => "Blog updation not successful",
             ];
         }
+
+        return redirect(url('blog'))->with(['status' => $status]);
     }
 
     /**
@@ -215,15 +195,17 @@ class BlogController extends Controller
         try {
             Blog::find($id)->delete();
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Blog deleted successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
                 'message' => "Blog deletion not successful",
             ];
         }
+
+        return redirect(url('blog'))->with(['status' => $status]);
     }
 }

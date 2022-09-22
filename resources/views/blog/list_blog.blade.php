@@ -8,17 +8,16 @@
         <table id="table_id" class="display">
             <thead>
                 <tr>
-                    <th>ID #</th>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Comments Count</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
         </table>
     </div>
 </div>
-
-
-
-
-
 
 <script>
     $(document).ready(function() {
@@ -26,5 +25,18 @@
             ajax: "{{ url('blog') }}",
         });
     });
+
+    @if(session('status'))
+    @php
+    $status = (session('status')['status']) ? 'success' : 'error';
+    @endphp
+    $(document).ready(function() {
+        $.toast({
+            type: "{{ $status }}",
+            content: "{{ session('status')['message'] }}",
+            delay: 5000
+        });
+    });
+    @endif
 </script>
 @endsection
