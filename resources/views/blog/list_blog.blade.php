@@ -5,24 +5,53 @@
         <h1>All blogs</h1>
     </div>
     <div>
-        <table id="table_id" class="display">
+        <table id="datatable" class="display">
             <thead>
                 <tr>
                     <th>#</th>
                     <th>Title</th>
                     <th>Category</th>
                     <th>Comments Count</th>
+                    <th>Tags</th>
                     <th>Actions</th>
                 </tr>
             </thead>
+            <tfoot>
+                <tr>
+                    <th>#</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Comments Count</th>
+                    <th>Tag</th>
+                    <th>Actions</th>
+                </tr>
+            </tfoot>
         </table>
     </div>
 </div>
 
 <script>
     $(document).ready(function() {
-        $('#table_id').DataTable({
+        $('#datatable tfoot th').each(function() {
+            var title = $(this).text();
+            $(this).html('<input type="text" placeholder="Search ' + title + '" />');
+        });
+        $('#datatable').DataTable({
             ajax: "{{ url('blog') }}",
+            initComplete: function() {
+                // Apply the search
+                this.api()
+                    .columns()
+                    .every(function() {
+                        var that = this;
+
+                        $('input', this.footer()).on('keyup change clear', function() {
+                            if (that.search() !== this.value) {
+                                that.search(this.value).draw();
+                            }
+                        });
+                    });
+            },
         });
     });
 

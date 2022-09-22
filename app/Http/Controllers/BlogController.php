@@ -26,6 +26,7 @@ class BlogController extends Controller
                     $value->title,
                     $value->category->name,
                     $value->comments_count,
+                    implode(', ', $value->tags()->pluck('name')->all()),
                     '<a href="' . url('blog/' . $value->id . '/edit') . '" class="btn btn-primary">Edit</a>
                     <a href="' . url('blog/' . $value->id) . '" class="btn btn-info">View</a>',
                 ];
