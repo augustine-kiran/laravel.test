@@ -44,16 +44,18 @@ class CategoryController extends Controller
                 'name' => $request->category_name,
             ]);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Category saved successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Category saved not successful",
             ];
         }
+
+        return redirect(url('category'))->with(['status' => $status]);
     }
 
     /**
@@ -96,16 +98,18 @@ class CategoryController extends Controller
                 'name' => $request->category_name,
             ]);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Category updated successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Category updation not successful",
             ];
         }
+
+        return redirect(url('category'))->with(['status' => $status]);
     }
 
     /**
@@ -119,15 +123,17 @@ class CategoryController extends Controller
         try {
             Category::find($id)->delete();
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Category deleted successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Category deletion not successful",
             ];
         }
+
+        return redirect(url('category'))->with(['status' => $status]);
     }
 }

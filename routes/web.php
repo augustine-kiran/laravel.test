@@ -17,7 +17,7 @@ Route::get('/', function () {
     return redirect(url('login'));
 });
 
-Route::middleware([])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::resource('tags', 'TagsController');
     Route::resource('blog', 'BlogController');
     Route::resource('user', 'UserController');

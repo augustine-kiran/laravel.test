@@ -44,16 +44,18 @@ class TagsController extends Controller
                 'name' => $request->tag_name,
             ]);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Tag saved successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Tag saved not successful",
             ];
         }
+
+        return redirect(url('tags'))->with(['status' => $status]);
     }
 
     /**
@@ -96,16 +98,18 @@ class TagsController extends Controller
                 'name' => $request->tag_name,
             ]);
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Tag updated successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Tag updation not successful",
             ];
         }
+
+        return redirect(url('tags'))->with(['status' => $status]);
     }
 
     /**
@@ -119,15 +123,17 @@ class TagsController extends Controller
         try {
             Tags::find($id)->delete();
 
-            return [
+            $status = [
                 'status' => true,
                 'message' => "Tag deleted successfully",
             ];
         } catch (\Exception $ex) {
-            return [
+            $status = [
                 'status' => false,
-                'message' => $ex->getMessage(),
+                'message' => "Tag deletion not successful",
             ];
         }
+
+        return redirect(url('tags'))->with(['status' => $status]);
     }
 }

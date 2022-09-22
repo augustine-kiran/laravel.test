@@ -26,4 +26,19 @@
         </tbody>
     </table>
 </div>
+
+@if(session('status'))
+<script>
+    @php
+    $status = (session('status')['status']) ? 'success' : 'error';
+    @endphp
+    $(document).ready(function() {
+        $.toast({
+            type: "{{ $status }}",
+            content: "{{ session('status')['message'] }}",
+            delay: 5000
+        });
+    });
+</script>
+@endif
 @endsection
