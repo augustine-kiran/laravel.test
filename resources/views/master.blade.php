@@ -57,6 +57,7 @@
             <a href="{{ url('user/create') }}"><button class="dropbtn">User</button></a>
             <div class="dropdown-content">
                 <a href="{{ url('user/create') }}">Create User</a>
+                <a href="{{ url('logout') }}">Logout</a>
             </div>
         </div>
     </div>
