@@ -8,6 +8,7 @@ use App\Models\Tags;
 use App\Models\Image;
 use App\Models\Category;
 use App\Models\TagAssigned;
+use DataTables;
 
 class BlogController extends Controller
 {
@@ -16,8 +17,46 @@ class BlogController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        // $data = Blog::all('id');
+        // return DataTables::of($data)
+        //     ->addColumn(
+        //         'id',
+        //         function ($row) {
+        //             return "ok";
+        //         }
+        //     )
+        //     ->removeColumn('comments_count')
+        //     ->removeColumn('comments')
+        //     ->removeColumn('created_at')
+        //     ->removeColumn('updated_at')
+        // ->addColumn('action', function ($row) {
+
+        //     $btn = '<a href="javascript:void(0)" class="edit btn btn-primary btn-sm">View</a>';
+
+        //     return $btn;
+        // })
+        // ->rawColumns(['action'])
+        // ->make(true);
+        if ($request->ajax()) {
+            $data = Blog::all('id');
+            // return $data;
+            return DataTables::of($data)
+                ->addColumn(
+                    'id',
+                    function ($row) {
+                        return "ok";
+                    }
+                )
+                ->removeColumn('id')
+                ->removeColumn('comments_count')
+                ->removeColumn('comments')
+                ->removeColumn('created_at')
+                ->removeColumn('updated_at')
+                ->make(true);
+        }
+
         return view('blog/list_blog', ['blog' => Blog::all()]);
     }
 
@@ -57,16 +96,20 @@ class BlogController extends Controller
                 'title' => $request->title,
                 'content' => $request->content,
                 'category_id' => $request->category,
-                'author_id' => 1, //Author::where('username', session('username'))->value('id'),
+                'user_id' => auth()->id(),
                 'image_id' => $image->id,
             ]);
+            $tags = [];
 
-            foreach ($request->tags as $key => $value) {
-                TagAssigned::create([
+            foreach ($request->tags as $value) {
+                $tags[] = [
                     'tag_id' => $value,
                     'blog_id' => $blog->id,
-                ]);
+                ];
             }
+
+            $blog->tagsAssigned()->createMany($tags);
+
             return [
                 'status' => true,
                 'message' => "Blog saved successfully",
@@ -123,8 +166,7 @@ class BlogController extends Controller
                 'title' => $request->title,
                 'content' => $request->content,
                 'category_id' => $request->category,
-                'author_id' => 1, //Author::where('username', session('username'))->value('id'),
-                // 'image_id' => $image->id,
+                'user_id' => auth()->id(),
             ];
 
             if ($request->hasFile('image')) {
@@ -135,17 +177,24 @@ class BlogController extends Controller
                 $data['image_id'] = $image->id;
             }
 
-            $blog = Blog::find($id)->update($data);
+            $blog = Blog::find($id);
+            $blog->tagsAssigned()->delete();
+            $blog->update($data);
 
-            foreach ($request->tags as $key => $value) {
-                TagAssigned::firstOrCreate([
+            $tags = [];
+
+            foreach ($request->tags as $value) {
+                $tags[] = [
                     'tag_id' => $value,
                     'blog_id' => $id,
-                ]);
+                ];
             }
+
+            $blog->tagsAssigned()->createMany($tags);
+
             return [
                 'status' => true,
-                'message' => "Blog saved successfully",
+                'message' => "Blog updated successfully",
             ];
         } catch (\Exception $ex) {
             return [
@@ -176,10 +225,5 @@ class BlogController extends Controller
                 'message' => $ex->getMessage(),
             ];
         }
-    }
-
-    public function getBlogList()
-    {
-        return Blog::all();
     }
 }

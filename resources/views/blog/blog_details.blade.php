@@ -23,10 +23,11 @@
     <div>
         <h3>Comments</h3>
         <div>
-            <form action="{{ url('blog/create') }}" method="get">
+            <form action="{{ url('comments') }}" method="POST">
+                @csrf
                 <label for="comment">Your comment</label>
                 <input type="text" name="comment" id="comment" required autofocus>
-                <input type="text" name="blog_id" value="{{ $blog->id }}" hidden>
+                <input type="hidden" name="blog_id" value="{{ $blog->id }}">
                 <input type="submit" value="Save comment">
             </form>
         </div>

@@ -17,12 +17,12 @@ Route::get('/', function () {
     return redirect(url('login'));
 });
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware([])->group(function () {
     Route::resource('tags', 'TagsController');
     Route::resource('blog', 'BlogController');
-    Route::get('get_blogs', 'BlogController@getBlogList');
     Route::resource('user', 'UserController');
     Route::resource('category', 'CategoryController');
+    Route::resource('comments', 'CommentsController');
 });
 
 Route::resource('login', 'LoginController');

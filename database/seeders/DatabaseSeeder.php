@@ -4,7 +4,7 @@ namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use App\Models\Category;
-use App\Models\Author;
+use App\Models\User;
 use App\Models\Tags;
 use App\Models\Image;
 use App\Models\Blog;
@@ -24,8 +24,10 @@ class DatabaseSeeder extends Seeder
             'name' => "Example Category",
         ]);
 
-        Author::create([
-            'username' => 'Example Author',
+        User::create([
+            'name' => 'Admin User',
+            'username' => 'adminuser',
+            'password' => '$2y$10$F9EjvuCzKIfxL/UCKl300er6dM3mofDKcgrSmVpZZ6vnNRL10/vzu',
         ]);
 
         Tags::create([
@@ -41,7 +43,7 @@ class DatabaseSeeder extends Seeder
             'content' => 'Example Content',
             'image_id' => 1,
             'category_id' => 1,
-            'author_id' => 1,
+            'user_id' => 1,
         ]);
 
         TagAssigned::create([
@@ -51,7 +53,7 @@ class DatabaseSeeder extends Seeder
 
         Comments::create([
             'blog_id' => 1,
-            'author_id' => 1,
+            'user_id' => 1,
             'comment' => 'Test Comment',
         ]);
         // \App\Models\User::factory(10)->create();

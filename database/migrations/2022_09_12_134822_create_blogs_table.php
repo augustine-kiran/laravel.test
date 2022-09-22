@@ -19,7 +19,7 @@ class CreateBlogsTable extends Migration
             $table->string('content');
             $table->foreignId('image_id')->nullable()->constrained('images');
             $table->foreignId('category_id')->nullable()->constrained('categories')->nullOnDelete();
-            $table->foreignId('author_id')->nullable()->constrained('authors');
+            $table->foreignId('user_id')->nullable()->constrained('users');
             $table->timestamps();
         });
     }

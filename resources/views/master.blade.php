@@ -7,13 +7,13 @@
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/datatables.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/menu.css') }}">
+    <script src="{{ asset('js/jquery.min.js') }}"></script>
     <script src="{{ asset('js/datatables.min.js') }}"></script>
     <script src="{{ asset('js/bootstrap.min.js') }}"></script>
-    <script src="{{ asset('js/jquery.min.js') }}"></script>
 </head>
 
 <body>
-    <div class="row justify-content-center">
+    <div class="row justify-content-center" style="margin-top: 1%;">
         <!-- Home -->
         <div class="dropdown" style="margin-left: 20px;">
             <a href="{{ url('/') }}"><button class="dropbtn">Home</button></a>

@@ -17,27 +17,32 @@ class Blog extends Model
 
     public function category()
     {
-        return $this->hasOne(Category::class, 'id');
+        return $this->hasOne(Category::class, 'id', 'category_id');
     }
 
     public function tags()
     {
-        return $this->hasManyThrough(Tags::class, TagAssigned::class, 'blog_id', 'id', 'id', 'id');
+        return $this->hasManyThrough(Tags::class, TagAssigned::class, 'blog_id', 'id', 'id', 'tag_id');
+    }
+
+    public function tagsAssigned()
+    {
+        return $this->hasMany(TagAssigned::class, 'blog_id', 'id');
     }
 
     public function comments()
     {
-        return $this->hasMany(Comments::class);
+        return $this->hasMany(Comments::class, 'blog_id', 'id');
     }
 
     public function image()
     {
-        return $this->hasOne(Image::class, 'id');
+        return $this->hasOne(Image::class, 'id', 'image_id');
     }
 
     public function author()
     {
-        return $this->hasOne(Author::class, 'id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 
     public function getCommentsCountAttribute()
@@ -50,7 +55,7 @@ class Blog extends Model
         parent::boot();
         self::deleting(function ($blog) {
             $blog->comments()->delete();
-            $blog->tags()->delete();
+            $blog->tagsAssigned()->delete();
         });
         self::deleted(function ($blog) {
             $blog->image()->delete();

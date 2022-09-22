@@ -9,11 +9,11 @@ class Comments extends Model
 {
     use HasFactory;
 
-    protected $hidden = ['id', 'blog_id', 'author_id'];
-    protected $fillable = ['blog_id', 'comment', 'author_id'];
+    protected $hidden = ['id', 'blog_id', 'user_id'];
+    protected $fillable = ['blog_id', 'comment', 'user_id'];
 
     public function author()
     {
-        return $this->hasOne(Author::class, 'id');
+        return $this->hasOne(User::class, 'id', 'user_id');
     }
 }
