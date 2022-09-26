@@ -35,7 +35,6 @@
                         <label class="form-check-label" for="comments_count">Comments Count</label>
                         <select class="form-control" name="comments_count" id="comments_count">
                             <option value="">-- Select Comments Count --</option>
-                            <option value="1">1</option>
                             @foreach($commentsCounts as $value)
                             <option value="{{ $value }}">{{ $value }}</option>
                             @endforeach
