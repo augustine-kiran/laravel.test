@@ -66,7 +66,7 @@
             <p style="color: grey;">Logged User: {{ auth()->user()->name }}</p>
         </div>
     </div>
-    <div class="container" style="margin-left: 2%;">
+    <div class="container">
         @yield('content')
     </div>
 </body>
