@@ -40,7 +40,8 @@
                             @endforeach
                         </select>
                     </div>
-                    <button type="button" id="search" class="btn btn-primary col-md-3 offset-md-2">Search</button>
+                    <button type="button" id="reset" class="btn btn-info col-md-2 offset-md-1">Reset</button> &nbsp;
+                    <button type="button" id="search" class="btn btn-primary col-md-2">Search</button>
                 </div>
             </div>
         </div>
@@ -82,6 +83,14 @@
     $(document).ready(function() {
         getTable();
         $("#search").click(function() {
+            table.destroy();
+            getTable();
+        });
+
+        $("#reset").click(function() {
+            $('#category').prop('selectedIndex', 0);
+            $('#tag').prop('selectedIndex', 0);
+            $('#comments_count').prop('selectedIndex', 0);
             table.destroy();
             getTable();
         });
