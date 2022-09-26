@@ -18,8 +18,35 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-            $data = Blog::all();
+
+            // return gettype($request->search['value']);
+
+
+
+
+
             $output['data'] = [];
+
+            $data = Blog::where('title', 'like', '%' . $request->search['value'] . '%')
+                ->orWhere('title', 'like', '%' . $request->search['value'] . '%')
+                ->orWhereHas('category', function ($query) use ($request) {
+                    return $query->where('name', 'like', '%' . $request->search['value'] . '%');
+                })
+                ->orWhereHas('tags', function ($query) use ($request) {
+                    return $query->where('name', 'like', '%' . $request->search['value'] . '%');
+                });
+
+            if (is_numeric($request->search['value'])) {
+                $data = $data->orHas('comments', '=', (int) $request->search['value']);
+            }
+
+            $data = $data->skip($request->start)
+                ->take($request->length)
+                ->get();
+
+            $output['draw'] = $request->draw;
+            $output['recordsTotal'] = Blog::count();
+            $output['recordsFiltered'] = count($data);
             foreach ($data as $value) {
                 $output['data'][] = [
                     $value->id,
@@ -31,6 +58,7 @@ class BlogController extends Controller
                     <a href="' . url('blog/' . $value->id) . '" class="btn btn-info">View</a>',
                 ];
             }
+
             return response()->json($output);
         }
 

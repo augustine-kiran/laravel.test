@@ -16,16 +16,6 @@
                     <th>Actions</th>
                 </tr>
             </thead>
-            <tfoot>
-                <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Comments Count</th>
-                    <th>Tag</th>
-                    <th>Actions</th>
-                </tr>
-            </tfoot>
         </table>
     </div>
 </div>
@@ -37,21 +27,9 @@
             $(this).html('<input type="text" placeholder="Search ' + title + '" />');
         });
         $('#datatable').DataTable({
+            processing: true,
+            serverSide: true,
             ajax: "{{ url('blog') }}",
-            initComplete: function() {
-                // Apply the search
-                this.api()
-                    .columns()
-                    .every(function() {
-                        var that = this;
-
-                        $('input', this.footer()).on('keyup change clear', function() {
-                            if (that.search() !== this.value) {
-                                that.search(this.value).draw();
-                            }
-                        });
-                    });
-            },
         });
     });
 
