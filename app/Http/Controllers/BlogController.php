@@ -18,27 +18,38 @@ class BlogController extends Controller
     public function index(Request $request)
     {
         if ($request->ajax()) {
-
-            // return gettype($request->search['value']);
-
-
-
-
-
             $output['data'] = [];
 
-            $data = Blog::where('title', 'like', '%' . $request->search['value'] . '%')
-                ->orWhere('title', 'like', '%' . $request->search['value'] . '%')
-                ->orWhereHas('category', function ($query) use ($request) {
-                    return $query->where('name', 'like', '%' . $request->search['value'] . '%');
-                })
-                ->orWhereHas('tags', function ($query) use ($request) {
-                    return $query->where('name', 'like', '%' . $request->search['value'] . '%');
-                });
+            $data = Blog::query();
 
-            if (is_numeric($request->search['value'])) {
-                $data = $data->orHas('comments', '=', (int) $request->search['value']);
+            if (!empty($request->category)) {
+                $data = $data->where('category_id', $request->category);
             }
+
+            if (!empty($request->tag)) {
+                $data = $data->WhereHas('tags', function ($query) use ($request) {
+                    return $query->where('tags.id', $request->tag);
+                });
+            }
+
+            if (is_numeric($request->comments_count)) {
+                $data = $data->has('comments', (int) $request->comments_count);
+            }
+
+            $data = $data->where(function ($query) use ($request) {
+                $query->where('title', 'like', '%' . $request->search['value'] . '%')
+                    ->orWhere('title', 'like', '%' . $request->search['value'] . '%')
+                    ->orWhereHas('category', function ($query) use ($request) {
+                        return $query->where('name', 'like', '%' . $request->search['value'] . '%');
+                    })
+                    ->orWhereHas('tags', function ($query) use ($request) {
+                        return $query->where('name', 'like', '%' . $request->search['value'] . '%');
+                    });
+                if (is_numeric($request->search['value'])) {
+                    $query = $query->orHas('comments', '=', (int) $request->search['value']);
+                }
+            });
+
 
             $data = $data->skip($request->start)
                 ->take($request->length)
@@ -62,7 +73,19 @@ class BlogController extends Controller
             return response()->json($output);
         }
 
-        return view('blog/list_blog', ['blog' => Blog::all()]);
+        $blog = Blog::all();
+        $commentsCounts = [];
+
+        foreach ($blog as $key => $value) {
+            $commentsCounts[] = $value->comments_count;
+        }
+
+        return view('blog/list_blog', [
+            'blog' => $blog,
+            'categories' => Category::all(),
+            'tags' => Tags::all(),
+            'commentsCounts' => $commentsCounts,
+        ]);
     }
 
     /**
