@@ -160,6 +160,7 @@ class BlogController extends Controller
      */
     public function show($id)
     {
+        return Blog::find($id)->tags;
         return view('blog/blog_details', ['blog' => Blog::find($id)]);
     }
 

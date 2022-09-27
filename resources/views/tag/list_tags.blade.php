@@ -7,9 +7,9 @@
     <table class="table table-hover">
         <thead>
             <tr>
-                <th scope="col">#</th>
-                <th scope="col">Name</th>
-                <th scope="col">Actions</th>
+                <th scope="col" class="col-md-2">ID #</th>
+                <th scope="col" class="col-md-6">Name</th>
+                <th scope="col" class="col-md-4">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -18,8 +18,15 @@
                 <th scope="row">{{ $value->id }}</th>
                 <td><a href="{{ url('tags/' . $value->id ) }}">{{ $value->name }}</a></td>
                 <td>
-                    <a href="{{ url('tags/' . $value->id) }}" class="btn btn-success">View</a>
-                    <a href="{{ url('tags/' . $value->id . '/edit') }}" class="btn btn-primary">Edit</a>
+                    <div class="row">
+                        <form><a href=" {{ url('tags/' . $value->id) }}" class="btn btn-success">View</a></form> &nbsp;
+                        <form><a href="{{ url('tags/' . $value->id . '/edit') }}" class="btn btn-primary">Edit</a></form> &nbsp;
+                        <form action="{{ url('tags/' . $value->id) }}" method="POST" onsubmit="return confirm('Do you want to delete?');">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="btn btn-danger">Delete</button>
+                        </form>
+                    </div>
                 </td>
             </tr>
             @endforeach

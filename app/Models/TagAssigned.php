@@ -11,4 +11,5 @@ class TagAssigned extends Model
 
     protected $fillable = ['tag_id', 'blog_id'];
     protected $hidden = ['id', 'tag_id', 'blog_id'];
+    protected $table = 'blog_tag';
 }

@@ -36,7 +36,7 @@ class CommentsController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            'blog_id' => 'required|numeric',
+            'blog_id' => 'required|numeric|exists:blogs,id',
             'comment' => 'required:min:2',
         ]);
 

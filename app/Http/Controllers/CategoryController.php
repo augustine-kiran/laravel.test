@@ -66,7 +66,7 @@ class CategoryController extends Controller
      */
     public function show($id)
     {
-        return view('category/category_details', ['category' => Category::find($id)]);
+        return view('category/category_details', ['category' => Category::findOrFail($id)]);
     }
 
     /**
@@ -77,7 +77,7 @@ class CategoryController extends Controller
      */
     public function edit($id)
     {
-        return view('category/edit_category', ['category' => Category::find($id)]);
+        return view('category/edit_category', ['category' => Category::findOrFail($id)]);
     }
 
     /**
@@ -90,11 +90,11 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'category_name' => 'bail|required|unique:categories,name|max:25',
+            'category_name' => 'bail|required|unique:categories,name,' . $id . '|max:25',
         ]);
 
         try {
-            Category::find($id)->update([
+            Category::findOrFail($id)->update([
                 'name' => $request->category_name,
             ]);
 
@@ -121,7 +121,7 @@ class CategoryController extends Controller
     public function destroy($id)
     {
         try {
-            Category::find($id)->delete();
+            Category::findOrFail($id)->delete();
 
             $status = [
                 'status' => true,

@@ -66,7 +66,7 @@ class TagsController extends Controller
      */
     public function show($id)
     {
-        return view('tag/tag_details', ['tag' => Tags::find($id)]);
+        return view('tag/tag_details', ['tag' => Tags::findOrFail($id)]);
     }
 
     /**
@@ -77,7 +77,7 @@ class TagsController extends Controller
      */
     public function edit($id)
     {
-        return view('tag/edit_tag', ['tag' => Tags::find($id)]);
+        return view('tag/edit_tag', ['tag' => Tags::findOrFail($id)]);
     }
 
     /**
@@ -90,11 +90,11 @@ class TagsController extends Controller
     public function update(Request $request, $id)
     {
         $this->validate($request, [
-            'tag_name' => 'bail|required|unique:tags,name|max:25',
+            'tag_name' => 'bail|required|unique:tags,name,' . $id . '|max:25',
         ]);
 
         try {
-            Tags::find($id)->update([
+            Tags::findOrFail($id)->update([
                 'name' => $request->tag_name,
             ]);
 
@@ -121,7 +121,7 @@ class TagsController extends Controller
     public function destroy($id)
     {
         try {
-            Tags::find($id)->delete();
+            Tags::findOrFail($id)->delete();
 
             $status = [
                 'status' => true,

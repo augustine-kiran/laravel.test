@@ -22,7 +22,8 @@ class Blog extends Model
 
     public function tags()
     {
-        return $this->hasManyThrough(Tags::class, TagAssigned::class, 'blog_id', 'id', 'id', 'tag_id');
+        return $this->belongsToMany(Tag::class); //->using(BlogTag::class);
+        // return $this->hasManyThrough(Tags::class, TagAssigned::class, 'blog_id', 'id', 'id', 'tag_id');
     }
 
     public function tagsAssigned()
