@@ -9,41 +9,30 @@ class Blog extends Model
 {
     use HasFactory;
 
-    const AUTHOR_NAME = 'username';
+    const AUTHOR_NAME = 'name';
 
-    protected $hidden = ['author_id', 'category_id', 'image_id'];
+    protected $hidden = ['user_id', 'category_id'];
     protected $appends = ['comments_count'];
-    protected $fillable = ['title', 'content', 'user_id', 'category_id', 'image_id'];
+    protected $fillable = ['title', 'content', 'user_id', 'category_id', 'image_path'];
 
     public function category()
     {
-        return $this->hasOne(Category::class, 'id', 'category_id');
+        return $this->belongsTo(Category::class);
     }
 
     public function tags()
     {
-        return $this->belongsToMany(Tag::class); //->using(BlogTag::class);
-        // return $this->hasManyThrough(Tags::class, TagAssigned::class, 'blog_id', 'id', 'id', 'tag_id');
-    }
-
-    public function tagsAssigned()
-    {
-        return $this->hasMany(TagAssigned::class, 'blog_id', 'id');
+        return $this->belongsToMany(Tag::class)->using(BlogTag::class)->withTimestamps();
     }
 
     public function comments()
     {
-        return $this->hasMany(Comments::class, 'blog_id', 'id')->orderBy('id', 'DESC');
+        return $this->hasMany(Comments::class)->orderBy('id', 'DESC');
     }
 
-    public function image()
+    public function user()
     {
-        return $this->hasOne(Image::class, 'id', 'image_id');
-    }
-
-    public function author()
-    {
-        return $this->hasOne(User::class, 'id', 'user_id');
+        return $this->belongsTo(User::class);
     }
 
     public function getCommentsCountAttribute()
@@ -56,10 +45,7 @@ class Blog extends Model
         parent::boot();
         self::deleting(function ($blog) {
             $blog->comments()->delete();
-            $blog->tagsAssigned()->delete();
-        });
-        self::deleted(function ($blog) {
-            $blog->image()->delete();
+            $blog->tags()->detach();
         });
     }
 }

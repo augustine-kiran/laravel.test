@@ -2,7 +2,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-6">
-        <img src="{{ asset($blog->image->path) }}" class="img-fluid" alt="Blog-Image" width="100%">
+        <img src="{{ asset($blog->image_path) }}" class="img-fluid" alt="Blog-Image" width="100%">
     </div>
     <div class="col-md-6">
         <div>
@@ -17,7 +17,7 @@
         </div>
         <div class="form-group">
             <label for="author">Author</label>
-            <input type="text" class="form-control" id="author" value="{{ $blog->author->name }}" disabled>
+            <input type="text" class="form-control" id="author" value="{{ $blog->user->name }}" disabled>
         </div>
     </div>
 </div>
@@ -33,11 +33,6 @@
         </div>
     </div>
     <div class="md-col-6">
-        <form action="{{ url('blog/' . $blog->id) }}" method="POST">
-            @csrf
-            @method('DELETE')
-            <button type="submit" class="btn btn-danger">Delete Blog</button>
-        </form>
     </div>
     <div class="col-md-11 offset-md-1">
         <form action="{{ url('comments/') }}" method="POST">
@@ -59,7 +54,7 @@
                 @method('DELETE')
                 <div class="media">
                     <div class="media-body">
-                        <h4 class="media-heading user_name">{{ $value->author->name }}</h4>
+                        <h4 class="media-heading user_name">{{ $value->user->{$value::AUTHOR_NAME} }}</h4>
                         {{ $value->comment }}
                     </div>
                     <p class="pull-right"><small>{{ $value->days_ago }}</small></p>&nbsp;

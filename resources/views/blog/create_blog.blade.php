@@ -7,17 +7,21 @@
     @csrf
     <div class="form-group">
         <label for="title">Enter Title</label>
-        <input type="text" class="form-control" id="title" name="title" placeholder="Enter title" required>
+        <input type="text" class="form-control" id="title" name="title" value="{{ old('title')}}" placeholder="Enter title" required>
     </div>
     <div class="form-group">
         <label for="content">Enter Content</label>
-        <textarea class="form-control" id="content" name="content" rows="3" placeholder="Enter Content" required></textarea>
+        <textarea class="form-control" id="content" name="content" rows="3" placeholder="Enter Content" required>{{ old('content')}}</textarea>
     </div>
     <div class="form-group">
         <label for="category">Select Category</label>
         <select class="form-select form-control" id="category" name="category">
             @foreach($categories as $key => $value)
+            @if(old('category') == $value->id)
+            <option value="{{ $value->id }}" selected>{{ $value->name }}</option>
+            @else
             <option value="{{ $value->id }}">{{ $value->name }}</option>
+            @endif
             @endforeach
         </select>
     </div>
@@ -40,4 +44,14 @@
     </div>
     <button type="submit" class="btn btn-primary btn-lg btn-block">Create New Blog</button>
 </form>
+
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 @endsection

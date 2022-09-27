@@ -12,8 +12,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-check-label" for="category">Categories</label>
-                        <select class="form-control" name="category" id="category">
-                            <option value="">-- Select Category --</option>
+                        <select class="form-control selectpicker" name="categories[]" id="category" multiple>
                             @foreach($categories as $value)
                             <option value="{{ $value->id }}">{{ $value->name }}</option>
                             @endforeach
@@ -21,8 +20,7 @@
                     </div>
                     <div class="col-md-6">
                         <label class="form-check-label" for="tag">Tags</label>
-                        <select class="form-control" name="tag" id="tag">
-                            <option value="">-- Select Tag --</option>
+                        <select class="form-control" name="tag[]" id="tags" multiple>
                             @foreach($tags as $value)
                             <option value="{{ $value->id }}">{{ $value->name }}</option>
                             @endforeach
@@ -33,12 +31,7 @@
                 <div class="row">
                     <div class="col-md-6">
                         <label class="form-check-label" for="comments_count">Comments Count</label>
-                        <select class="form-control" name="comments_count" id="comments_count">
-                            <option value="">-- Select Comments Count --</option>
-                            @foreach($commentsCounts as $value)
-                            <option value="{{ $value }}">{{ $value }}</option>
-                            @endforeach
-                        </select>
+                        <input type="number" class="form-control" id="comments_count" placeholder="Comments Count">
                     </div>
                     <button type="button" id="reset" class="btn btn-info col-md-2 offset-md-1">Reset</button> &nbsp;
                     <button type="button" id="search" class="btn btn-primary col-md-2">Search</button>
@@ -69,9 +62,10 @@
         table = $('#datatable').DataTable({
             processing: true,
             serverSide: true,
+            searching: false,
             ajax: {
                 cache: false,
-                url: "{{ url('blog') }}",
+                url: "{{ url('get_blog_list') }}",
                 data: {
                     category: $('#category').val(),
                     tag: $('#tag').val(),
@@ -88,9 +82,9 @@
         });
 
         $("#reset").click(function() {
-            $('#category').prop('selectedIndex', 0);
-            $('#tag').prop('selectedIndex', 0);
-            $('#comments_count').prop('selectedIndex', 0);
+            $("#category option:selected").prop("selected", false);
+            $("#tag option:selected").prop("selected", false);
+            $('#comments_count').val('');
             table.destroy();
             getTable();
         });

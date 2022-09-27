@@ -20,6 +20,7 @@ Route::get('/', function () {
 Route::middleware(['auth'])->group(function () {
     Route::resource('tags', 'TagsController');
     Route::resource('blog', 'BlogController');
+    Route::get('get_blog_list', 'BlogController@getBlogList');
     Route::resource('user', 'UserController');
     Route::resource('category', 'CategoryController');
     Route::resource('comments', 'CommentsController');

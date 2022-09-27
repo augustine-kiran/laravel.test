@@ -3,7 +3,7 @@
 <div>
     <h3>Edit blog</h3>
 </div>
-<form action="{{ url('blog/' . $blog->id) }}" method="POST" enctype="multipart/form-data">
+<form action="{{ url('blog/' . $blog->id) }}" method="POST" enctype="multipart/form-data" onsubmit="return checkFormInput();">
     @csrf
     @method('PUT')
     <div class="form-group">
@@ -52,4 +52,26 @@
     </div>
     <button type="submit" class="btn btn-primary btn-lg btn-block">Save Blog</button>
 </form>
+
+<script>
+    function checkFormInput() {
+        var checked = $('[name="tags[]"]:checked').length;
+        if (!checked) {
+            alert("You must select minimum one tag");
+            return false;
+        }
+
+        return true;
+    }
+</script>
+
+@if ($errors->any())
+<div class="alert alert-danger">
+    <ul>
+        @foreach ($errors->all() as $error)
+        <li>{{ $error }}</li>
+        @endforeach
+    </ul>
+</div>
+@endif
 @endsection

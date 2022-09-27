@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Tags;
+use App\Models\Tag;
 
 class TagsController extends Controller
 {
@@ -14,7 +14,7 @@ class TagsController extends Controller
      */
     public function index()
     {
-        return view('tag/list_tags', ['tags' => Tags::all()]);
+        return view('tag/list_tags', ['tags' => Tag::all()]);
     }
 
     /**
@@ -40,7 +40,7 @@ class TagsController extends Controller
         ]);
 
         try {
-            Tags::create([
+            Tag::create([
                 'name' => $request->tag_name,
             ]);
 
@@ -66,7 +66,7 @@ class TagsController extends Controller
      */
     public function show($id)
     {
-        return view('tag/tag_details', ['tag' => Tags::findOrFail($id)]);
+        return view('tag/tag_details', ['tag' => Tag::findOrFail($id)]);
     }
 
     /**
@@ -77,7 +77,7 @@ class TagsController extends Controller
      */
     public function edit($id)
     {
-        return view('tag/edit_tag', ['tag' => Tags::findOrFail($id)]);
+        return view('tag/edit_tag', ['tag' => Tag::findOrFail($id)]);
     }
 
     /**
@@ -94,7 +94,7 @@ class TagsController extends Controller
         ]);
 
         try {
-            Tags::findOrFail($id)->update([
+            Tag::findOrFail($id)->update([
                 'name' => $request->tag_name,
             ]);
 
@@ -121,7 +121,7 @@ class TagsController extends Controller
     public function destroy($id)
     {
         try {
-            Tags::findOrFail($id)->delete();
+            Tag::findOrFail($id)->delete();
 
             $status = [
                 'status' => true,
