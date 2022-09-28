@@ -11,6 +11,10 @@ use App\Services\BlogService;
 
 class BlogController extends Controller
 {
+    public function __construct(BlogService $blogService)
+    {
+        $this->blogService = $blogService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -40,8 +44,7 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         BlogValidation::createBlogValidation($request);
-        $blogService = new BlogService;
-        return redirect(url('blog'))->with(['status' => $blogService->createBlog($request)]);
+        return redirect(url('blog'))->with(['status' => $this->blogService->createBlog($request)]);
     }
 
     /**
@@ -76,8 +79,7 @@ class BlogController extends Controller
     public function update(Request $request, $id)
     {
         BlogValidation::updateBlogValidation($request);
-        $blogService = new BlogService;
-        return redirect(url('blog'))->with(['status' => $blogService->updateBlog($request, $id)]);
+        return redirect(url('blog'))->with(['status' => $this->blogService->updateBlog($request, $id)]);
     }
 
     /**
@@ -88,8 +90,7 @@ class BlogController extends Controller
      */
     public function destroy($id)
     {
-        $blogService = new BlogService;
-        return redirect(url('blog'))->with(['status' => $blogService->deleteBlog($id)]);
+        return redirect(url('blog'))->with(['status' => $this->blogService->deleteBlog($id)]);
     }
 
     /**
@@ -100,7 +101,6 @@ class BlogController extends Controller
      */
     public function getBlogList(Request $request)
     {
-        $blogService = new BlogService;
-        return $blogService->getBlogTableData($request);
+        return $this->blogService->getBlogTableData($request);
     }
 }
