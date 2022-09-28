@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Blog;
 use App\Models\Tag;
 use App\Models\Category;
+use App\Validations\BlogValidation;
+use App\Services\BlogService;
 
 class BlogController extends Controller
 {
@@ -37,38 +39,9 @@ class BlogController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'title' => 'bail|required|max:25',
-            'content' => 'bail|required',
-            'category' => 'bail|required|exists:categories,id',
-            'tags' => 'bail|required|array|exists:tags,id',
-            'image' => 'bail|required|mimes:png,jpeg|unique:blogs,image_path',
-        ]);
-
-        try {
-            $path = $request->file('image')->store('images');
-            $blog = Blog::create([
-                'title' => $request->title,
-                'content' => $request->content,
-                'category_id' => $request->category,
-                'user_id' => auth()->id(),
-                'image_path' => $path,
-            ]);
-
-            $blog->tags()->attach($request->tags);
-
-            $status = [
-                'status' => true,
-                'message' => "Blog saved successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => $ex->getMessage() . $ex->getLine(), // "Blog saved not successful",
-            ];
-        }
-
-        return redirect(url('blog'))->with(['status' => $status]);
+        BlogValidation::createBlogValidation($request);
+        $blogService = new BlogService;
+        return redirect(url('blog'))->with(['status' => $blogService->createBlog($request)]);
     }
 
     /**
@@ -102,43 +75,9 @@ class BlogController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'title' => 'bail|required|max:25',
-            'content' => 'bail|required',
-            'category' => 'bail|required|exists:categories,id',
-            'tags' => 'bail|required|array|exists:tags,id',
-            'image' => 'bail|mimes:png,jpeg|unique:blogs,image_path',
-        ]);
-
-        try {
-            $data = [
-                'title' => $request->title,
-                'content' => $request->content,
-                'category_id' => $request->category,
-                'user_id' => auth()->id(),
-            ];
-
-            if ($request->hasFile('image')) {
-                $path = $request->file('image')->store('images');
-                $data['image_path'] = $path;
-            }
-
-            $blog = Blog::findOrFail($id);
-            $blog->update($data);
-            $blog->tags()->sync($request->tags);
-
-            $status = [
-                'status' => true,
-                'message' => "Blog updated successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Blog updation not successful",
-            ];
-        }
-
-        return redirect(url('blog'))->with(['status' => $status]);
+        BlogValidation::updateBlogValidation($request);
+        $blogService = new BlogService;
+        return redirect(url('blog'))->with(['status' => $blogService->updateBlog($request, $id)]);
     }
 
     /**
@@ -149,21 +88,8 @@ class BlogController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            Blog::findOrFail($id)->delete();
-
-            $status = [
-                'status' => true,
-                'message' => "Blog deleted successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Blog deletion not successful",
-            ];
-        }
-
-        return redirect(url('blog'))->with(['status' => $status]);
+        $blogService = new BlogService;
+        return redirect(url('blog'))->with(['status' => $blogService->deleteBlog($id)]);
     }
 
     /**
@@ -174,51 +100,7 @@ class BlogController extends Controller
      */
     public function getBlogList(Request $request)
     {
-        // return $request->tag;
-        $output['data'] = [];
-
-        $data = Blog::query();
-
-        if (!empty($request->category)) {
-            $data = $data->whereIn('category_id', $request->categories);
-        }
-
-        if (!empty($request->tag)) {
-            $data = $data->WhereHas('tags', function ($query) use ($request) {
-                return $query->whereIn('tags.id', $request->tags);
-            });
-        }
-
-        if (is_numeric($request->comments_count)) {
-            $data = $data->has('comments', (int) $request->comments_count);
-        }
-
-
-
-
-        $data = $data->skip($request->start)
-            ->take($request->length)
-            ->get();
-
-        $output['draw'] = $request->draw;
-        $output['recordsTotal'] = Blog::count();
-        $output['recordsFiltered'] = count($data);
-        foreach ($data as $value) {
-            $output['data'][] = [
-                $value->id,
-                $value->title,
-                $value->category->name,
-                $value->comments_count,
-                implode(', ', $value->tags()->pluck('name')->all()),
-                '<div class="row">
-                        <form><a href="' . url('blog/' . $value->id . '/edit') . '" class="btn btn-primary">Edit</a></form>&nbsp;
-                        <form><a href="' . url('blog/' . $value->id) . '" class="btn btn-info">View</a></form>&nbsp;
-                        <form action="' . url('blog/' . $value->id) . '" method="POST" onsubmit="return confirm(\'Do you want to delete?\');">' . csrf_field() . method_field('DELETE') .
-                    '<button type="submit" class="btn btn-danger">Delete</button></form>
-                    </div>',
-            ];
-        }
-
-        return response()->json($output);
+        $blogService = new BlogService;
+        return $blogService->getBlogTableData($request);
     }
 }

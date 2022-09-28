@@ -11,16 +11,16 @@
                 <h6 class="card-subtitle mb-2 text-muted">Filter the table content with below options</h6>
                 <div class="row">
                     <div class="col-md-6">
-                        <label class="form-check-label" for="category">Categories</label>
-                        <select class="form-control selectpicker" name="categories[]" id="category" multiple>
+                        <label class="form-check-label" for="categories">Categories</label>
+                        <select class="form-control selectpicker" name="categories[]" id="categories" multiple>
                             @foreach($categories as $value)
                             <option value="{{ $value->id }}">{{ $value->name }}</option>
                             @endforeach
                         </select>
                     </div>
                     <div class="col-md-6">
-                        <label class="form-check-label" for="tag">Tags</label>
-                        <select class="form-control" name="tag[]" id="tags" multiple>
+                        <label class="form-check-label" for="tags">Tags</label>
+                        <select class="form-control" name="tags[]" id="tags" multiple>
                             @foreach($tags as $value)
                             <option value="{{ $value->id }}">{{ $value->name }}</option>
                             @endforeach
@@ -43,12 +43,12 @@
         <table id="datatable" class="display">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Title</th>
-                    <th>Category</th>
-                    <th>Comments Count</th>
-                    <th>Tags</th>
-                    <th>Actions</th>
+                    <th class="col-md-1">ID #</th>
+                    <th class="col-md-2">Title</th>
+                    <th class="col-md-2">Category</th>
+                    <th class="col-md-1">Comments Count</th>
+                    <th class="col-md-3">Tags</th>
+                    <th class="col-md-2">Actions</th>
                 </tr>
             </thead>
         </table>
@@ -67,8 +67,8 @@
                 cache: false,
                 url: "{{ url('get_blog_list') }}",
                 data: {
-                    category: $('#category').val(),
-                    tag: $('#tag').val(),
+                    categories: $('#categories').val(),
+                    tags: $('#tags').val(),
                     comments_count: $('#comments_count').val(),
                 },
             },
