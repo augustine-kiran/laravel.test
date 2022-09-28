@@ -115,28 +115,57 @@ class BlogService
     public function getBlogTableData($request)
     {
         try {
-            $output['data'] = [];
-            $data = Blog::query();
+            $data = $this->filteredBlogQuery($request);
+            $data = $data->skip($request->start)
+                ->take($request->length)
+                ->get();
+
+            return $this->getDataTableFormat($data);
+        } catch (\Exception $ex) {
+            return $this->getDataTableFormat([]);
+        }
+    }
+
+    /**
+     * This function filter data-table with request
+     * 
+     * @param $request
+     * @return Model $blogQuery
+     */
+    private function filteredBlogQuery($request)
+    {
+        try {
+            $blog = Blog::query();
 
             if (!empty($request->categories)) {
-                $data = $data->whereIn('category_id', $request->categories);
+                $blog = $blog->whereIn('category_id', $request->categories);
             }
 
             if (!empty($request->tags)) {
-                $data = $data->WhereHas('tags', function ($query) use ($request) {
+                $blog = $blog->WhereHas('tags', function ($query) use ($request) {
                     return $query->whereIn('tags.id', $request->tags);
                 });
             }
 
             if (is_numeric($request->comments_count)) {
-                $data = $data->has('comments', (int) $request->comments_count);
+                $blog = $blog->has('comments', (int) $request->comments_count);
             }
 
-            $data = $data->skip($request->start)
-                ->take($request->length)
-                ->get();
+            return $blog;
+        } catch (\Exception $ex) {
+            // 
+        }
+    }
 
-            $output['draw'] = $request->draw;
+    /**
+     * This function formats Blog Model into Datatable data
+     * 
+     * @param object $data
+     */
+    private function getDataTableFormat($data)
+    {
+        try {
+            $output['data'] = [];
             $output['recordsTotal'] = Blog::count();
             $output['recordsFiltered'] = count($data);
 
@@ -158,11 +187,7 @@ class BlogService
 
             return $output;
         } catch (\Exception $ex) {
-            return [
-                'recordsTotal' => 0,
-                'recordsFiltered' => 0,
-                'data' => []
-            ];
+            // 
         }
     }
 }
