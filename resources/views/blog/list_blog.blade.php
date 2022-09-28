@@ -33,8 +33,8 @@
                         <label class="form-check-label" for="comments_count">Comments Count</label>
                         <input type="number" class="form-control" id="comments_count" placeholder="Comments Count">
                     </div>
-                    <button type="button" id="reset" class="btn btn-info col-md-2 offset-md-1">Reset</button> &nbsp;
-                    <button type="button" id="search" class="btn btn-primary col-md-2">Search</button>
+                    <!-- <button type="button" id="reset" class="btn btn-info col-md-2 offset-md-1">Reset</button> &nbsp;
+                    <button type="button" id="search" class="btn btn-primary col-md-2">Search</button> -->
                 </div>
             </div>
         </div>
@@ -74,11 +74,16 @@
             },
         });
     }
+
+    function reloadTable() {
+        table.destroy();
+        getTable();
+    }
+
     $(document).ready(function() {
         getTable();
         $("#search").click(function() {
-            table.destroy();
-            getTable();
+            reloadTable();
         });
 
         $("#reset").click(function() {
@@ -87,6 +92,27 @@
             $('#comments_count').val('');
             table.destroy();
             getTable();
+        });
+
+        $('#categories').select2({
+            placeholder: 'Select Categories',
+            allowClear: true,
+        });
+        $('#tags').select2({
+            placeholder: 'Select Tags',
+            allowClear: true
+        });
+
+        $('#categories').on('change', function(e) {
+            reloadTable();
+        });
+
+        $('#tags').on('change', function(e) {
+            reloadTable();
+        });
+
+        $("#comments_count").on("keyup", function() {
+            reloadTable();
         });
     });
 
