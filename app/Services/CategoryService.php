@@ -68,7 +68,16 @@ class CategoryService
     public function deleteCategory($id)
     {
         try {
-            Category::findOrFail($id)->delete();
+            $category = Category::findOrFail($id);
+
+            if ($category->blog()->exists()) {
+                return [
+                    'status' => false,
+                    'message' => "Cannot delete category due to blogs are exist in this category",
+                ];
+            }
+
+            $category->delete();
 
             return [
                 'status' => true,

@@ -68,7 +68,16 @@ class TagService
     public function deleteTag($id)
     {
         try {
-            Tag::findOrFail($id)->delete();
+            $tag = Tag::findOrFail($id);
+
+            if ($tag->blog()->exists()) {
+                return [
+                    'status' => false,
+                    'message' => "Cannot delete tag due to blogs are exist in this tag",
+                ];
+            }
+
+            $tag->delete();
 
             return [
                 'status' => true,
