@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Tag;
+use App\Validations\TagValidation;
+use App\Services\TagService;
 
 class TagsController extends Controller
 {
@@ -35,27 +37,9 @@ class TagsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'tag_name' => 'bail|required|unique:tags,name|max:25',
-        ]);
-
-        try {
-            Tag::create([
-                'name' => $request->tag_name,
-            ]);
-
-            $status = [
-                'status' => true,
-                'message' => "Tag saved successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Tag saved not successful",
-            ];
-        }
-
-        return redirect(url('tags'))->with(['status' => $status]);
+        TagValidation::validateCreateTag($request);
+        $tagService = new TagService;
+        return redirect(url('tags'))->with(['status' => $tagService->createTag($request)]);
     }
 
     /**
@@ -89,27 +73,9 @@ class TagsController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'tag_name' => 'bail|required|unique:tags,name,' . $id . '|max:25',
-        ]);
-
-        try {
-            Tag::findOrFail($id)->update([
-                'name' => $request->tag_name,
-            ]);
-
-            $status = [
-                'status' => true,
-                'message' => "Tag updated successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Tag updation not successful",
-            ];
-        }
-
-        return redirect(url('tags'))->with(['status' => $status]);
+        TagValidation::validateUpdateTag($request, $id);
+        $tagService = new TagService;
+        return redirect(url('tags'))->with(['status' => $tagService->updateTag($request, $id)]);
     }
 
     /**
@@ -120,20 +86,7 @@ class TagsController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            Tag::findOrFail($id)->delete();
-
-            $status = [
-                'status' => true,
-                'message' => "Tag deleted successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Tag deletion not successful",
-            ];
-        }
-
-        return redirect(url('tags'))->with(['status' => $status]);
+        $tagService = new TagService;
+        return redirect(url('tags'))->with(['status' => $tagService->deleteTag($id)]);
     }
 }

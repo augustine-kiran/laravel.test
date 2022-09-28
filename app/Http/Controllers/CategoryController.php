@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Category;
+use App\Validations\CategoryValidation;
+use App\Services\CategoryService;
 
 class CategoryController extends Controller
 {
@@ -35,27 +37,9 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'category_name' => 'bail|required|unique:categories,name|max:25',
-        ]);
-
-        try {
-            Category::create([
-                'name' => $request->category_name,
-            ]);
-
-            $status = [
-                'status' => true,
-                'message' => "Category saved successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Category saved not successful",
-            ];
-        }
-
-        return redirect(url('category'))->with(['status' => $status]);
+        CategoryValidation::validateCreateCategory($request);
+        $categoryService = new CategoryService;
+        return redirect(url('category'))->with(['status' => $categoryService->createCategory($request)]);
     }
 
     /**
@@ -89,27 +73,9 @@ class CategoryController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            'category_name' => 'bail|required|unique:categories,name,' . $id . '|max:25',
-        ]);
-
-        try {
-            Category::findOrFail($id)->update([
-                'name' => $request->category_name,
-            ]);
-
-            $status = [
-                'status' => true,
-                'message' => "Category updated successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Category updation not successful",
-            ];
-        }
-
-        return redirect(url('category'))->with(['status' => $status]);
+        CategoryValidation::validateUpdateCategory($request, $id);
+        $categoryService = new CategoryService;
+        return redirect(url('category'))->with(['status' => $categoryService->updateCategory($request, $id)]);
     }
 
     /**
@@ -120,20 +86,7 @@ class CategoryController extends Controller
      */
     public function destroy($id)
     {
-        try {
-            Category::findOrFail($id)->delete();
-
-            $status = [
-                'status' => true,
-                'message' => "Category deleted successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => "Category deletion not successful",
-            ];
-        }
-
-        return redirect(url('category'))->with(['status' => $status]);
+        $categoryService = new CategoryService;
+        return redirect(url('category'))->with(['status' => $categoryService->deleteCategory($id)]);
     }
 }

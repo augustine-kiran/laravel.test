@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Comments;
+use App\Validations\CommentValidation;
+use App\Services\CommentService;
 
 class CommentsController extends Controller
 {
@@ -35,29 +36,9 @@ class CommentsController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'blog_id' => 'required|numeric|exists:blogs,id',
-            'comment' => 'required:min:2',
-        ]);
-
-        try {
-            Comments::create([
-                'blog_id' => $request->blog_id,
-                'comment' => $request->comment,
-                'user_id' => auth()->id(),
-            ]);
-
-            $status = [
-                'status' => true,
-                'message' => "Comment saved successfully",
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => $ex->getMessage(),
-            ];
-        }
-
+        CommentValidation::validateCreateComment($request);
+        $commentService = new CommentService;
+        $commentService->createComment($request);
         return redirect(url('blog/' . $request->blog_id));
     }
 
@@ -103,9 +84,12 @@ class CommentsController extends Controller
      */
     public function destroy($id)
     {
-        $comment = Comments::find($id);
-        $blog_id = $comment->blog_id;
-        $comment->delete();
-        return redirect(url('blog/' . $blog_id));
+        $commentService = new CommentService;
+        $status = $commentService->deleteComment($id);
+
+        if ($status['status'])
+            return redirect(url('blog/' . $status['result']));
+
+        return redirect(url('blog'))->with(['status' => $status]);
     }
 }

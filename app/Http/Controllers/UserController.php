@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\User;
+use App\Validations\UserValidation;
+use App\Services\UserService;
 
 class UserController extends Controller
 {
@@ -35,27 +36,9 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'name' => 'required|max:25|min:6',
-            'username' => 'required|max:25|min:6',
-            'password' => 'required|confirmed|max:25|min:6',
-        ]);
-
-        try {
-            $request['password'] = bcrypt($request->password);
-            User::create($request->all('name', 'username', 'password'));
-            $status = [
-                'status' => true,
-                'message' => 'User created successfull',
-            ];
-        } catch (\Exception $ex) {
-            $status = [
-                'status' => false,
-                'message' => 'User create not successful',
-            ];
-        }
-
-        return redirect(url('blog'))->with(['status' => $status]);
+        UserValidation::validateCreateUser($request);
+        $userService = new UserService;
+        return redirect(url('blog'))->with(['status' => $userService->createUser($request)]);
     }
 
     /**

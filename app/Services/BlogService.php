@@ -80,7 +80,7 @@ class BlogService
     /**
      * Function for deleting a blog
      * 
-     * @param $request
+     * @param $id
      * 
      * @return array $status = ['status' => true/false, 'message' => "message"]
      */

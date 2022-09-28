@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Validations\LoginValidation;
 
 class LoginController extends Controller
 {
@@ -39,10 +40,7 @@ class LoginController extends Controller
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            'username' => 'required|min:6|max:25',
-            'password' => 'required|min:6|max:25',
-        ]);
+        LoginValidation::validateLogin($request);
 
         if (Auth::attempt($request->only('username', 'password'))) {
             return redirect()->intended(url('blog'));
