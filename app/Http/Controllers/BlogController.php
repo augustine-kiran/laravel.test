@@ -6,8 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Blog;
 use App\Models\Tag;
 use App\Models\Category;
-use App\Validations\BlogValidation;
 use App\Services\BlogService;
+use App\Http\Requests\BlogRequest;
 
 class BlogController extends Controller
 {
@@ -41,9 +41,8 @@ class BlogController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(BlogRequest $request)
     {
-        BlogValidation::createBlogValidation($request);
         return redirect(url('blog'))->with(['status' => $this->blogService->createBlog($request)]);
     }
 
@@ -76,9 +75,8 @@ class BlogController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(BlogRequest $request, $id)
     {
-        BlogValidation::updateBlogValidation($request);
         return redirect(url('blog'))->with(['status' => $this->blogService->updateBlog($request, $id)]);
     }
 
