@@ -132,7 +132,7 @@ class BlogService
      * @param $request
      * @return Model $blogQuery
      */
-    private function filteredBlogQuery($request)
+    public function filteredBlogQuery($request)
     {
         try {
             $blog = Blog::query();

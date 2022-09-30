@@ -33,6 +33,9 @@
                         <label class="form-check-label" for="comments_count">Comments Count</label>
                         <input type="number" class="form-control" id="comments_count" placeholder="Comments Count">
                     </div>
+                    <div class="col-md-6">
+                        <button type="button" id="export_csv" class="btn btn-secondary float-right" style="margin-top: 4%;">Export to CSV</button>
+                    </div>
                     <!-- <button type="button" id="reset" class="btn btn-info col-md-2 offset-md-1">Reset</button> &nbsp;
                     <button type="button" id="search" class="btn btn-primary col-md-2">Search</button> -->
                 </div>
@@ -66,14 +69,27 @@
             ajax: {
                 cache: false,
                 url: "{{ url('get_blog_list') }}",
-                data: {
-                    categories: $('#categories').val(),
-                    tags: $('#tags').val(),
-                    comments_count: $('#comments_count').val(),
-                },
+                data: getSearchParams(),
             },
         });
     }
+
+    function getSearchParams() {
+        return {
+            categories: $('#categories').val(),
+            tags: $('#tags').val(),
+            comments_count: $('#comments_count').val(),
+        };
+    }
+
+    $('#export_csv').click(function() {
+        $.ajax({
+            url: "{{ url('export_csv') }}",
+            data: getSearchParams(),
+        }).done(function(result) {
+            window.location.replace(result);
+        });
+    });
 
     function reloadTable() {
         table.destroy();

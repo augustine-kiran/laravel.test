@@ -24,6 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('user', 'UserController');
     Route::resource('category', 'CategoryController');
     Route::resource('comments', 'CommentsController');
+    Route::get('export_csv', 'ExportDataController@exportToCsv');
 });
 
 Route::resource('login', 'LoginController');
